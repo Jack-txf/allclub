@@ -89,7 +89,7 @@ public class SubjectCategoryController {
     /*
     更新分类
      */
-    @PostMapping("/upodate")
+    @PostMapping("/update")
     public Result<Boolean> update(@RequestBody SubjectCategoryDTO subjectCategoryDTO) {
         try{
             if ( log.isInfoEnabled() ) {
