@@ -86,5 +86,45 @@ public class SubjectCategoryController {
         }
     }
 
+    /*
+    更新分类
+     */
+    @PostMapping("/upodate")
+    public Result<Boolean> update(@RequestBody SubjectCategoryDTO subjectCategoryDTO) {
+        try{
+            if ( log.isInfoEnabled() ) {
+                log.info("SubjectCategoryController.add.dto:{}", JSON.toJSONString(subjectCategoryDTO));
+            }
+            // DTO转BO
+            SubjectCategoryBO subjectCategoryBO = SubjectCategoryDTOConverter.INSTANCE
+                    .convertDtoToCategoryBO(subjectCategoryDTO);
+            Boolean res = sbCategoryDomainService.update(subjectCategoryBO);
+            return Result.ok(res);
+        }catch (Exception e) {
+            log.error("error:{}", e.getMessage());
+            return Result.fail("更新分类失败!");
+        }
+    }
+
+    /*
+    删除分类
+     */
+    @PostMapping("/delete")
+    public Result<Boolean> delete(@RequestBody SubjectCategoryDTO subjectCategoryDTO) {
+        try{
+            if ( log.isInfoEnabled() ) {
+                log.info("SubjectCategoryController.delete.dto:{}", JSON.toJSONString(subjectCategoryDTO));
+            }
+            // DTO转BO
+            SubjectCategoryBO subjectCategoryBO = SubjectCategoryDTOConverter.INSTANCE
+                    .convertDtoToCategoryBO(subjectCategoryDTO);
+            Boolean res = sbCategoryDomainService.delete(subjectCategoryBO);
+            return Result.ok(res);
+        }catch (Exception e) {
+            log.error("error:{}", e.getMessage());
+            return Result.fail("删除分类失败!");
+        }
+    }
+
 
 }

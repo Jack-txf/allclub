@@ -1,6 +1,7 @@
 package com.feng.subject.infra.basic.service.impl;
 
 import com.alibaba.fastjson.JSON;
+import com.feng.subject.common.enums.IsDeletedFlagEnum;
 import com.feng.subject.infra.basic.entity.SubjectCategory;
 import com.feng.subject.infra.basic.mapper.SubjectCategoryDao;
 import com.feng.subject.infra.basic.service.SubjectCategoryService;
@@ -36,6 +37,7 @@ public class SubjectCategoryServiceImpl implements SubjectCategoryService {
             log.info("SubjectCategoryController.add.subjectCategory:{}"
                     , JSON.toJSONString(subjectCategory));
         }
+        subjectCategory.setIsDeleted(IsDeletedFlagEnum.UN_DELETED.getCode()); // 默认是未删除的
         this.subjectCategoryDao.insert(subjectCategory);
         return subjectCategory;
     }
