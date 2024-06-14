@@ -23,7 +23,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@Service
+@Service("subjectLabelDomainService")
 @Slf4j
 public class SubjectLabelDomainServiceImpl implements SubjectLabelDomainService {
 
