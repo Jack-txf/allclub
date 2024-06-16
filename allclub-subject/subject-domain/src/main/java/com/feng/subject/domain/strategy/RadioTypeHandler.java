@@ -36,6 +36,7 @@ public class RadioTypeHandler implements SubjectTypeHandler {
         if (subjectInfoBO.getOptionList().isEmpty()) {
             return ; // 是空的！不允许的
         }
+        System.out.println("单选题插入：" + subjectInfoBO);
 
         subjectInfoBO.getOptionList().forEach(option -> {
             SubjectRadio subjectRadio = RadioSubjectConverter.INSTANCE.convertBoToEntity(option);

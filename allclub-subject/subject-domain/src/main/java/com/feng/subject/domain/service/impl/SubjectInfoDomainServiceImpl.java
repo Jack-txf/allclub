@@ -15,6 +15,8 @@ import com.feng.subject.infra.basic.service.SubjectInfoService;
 import com.feng.subject.infra.basic.service.SubjectMappingService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import javax.annotation.Resource;
 import java.util.LinkedList;
 import java.util.List;
@@ -29,6 +31,7 @@ public class SubjectInfoDomainServiceImpl implements SubjectInfoDomainService {
     private SubjectMappingService subjectMappingService;
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public void add(SubjectInfoBO subjectInfoBO) {
         if ( log.isInfoEnabled() ) {
             log.info("info.SubjectInfoDomainServiceImpl.add: {}", JSON.toJSONString(subjectInfoBO));
@@ -41,8 +44,10 @@ public class SubjectInfoDomainServiceImpl implements SubjectInfoDomainService {
         // 实现步骤
         // 1.插入题目信息表的主表（题目大致信息）
         SubjectInfo subjectInfo = SubjectInfoConverter.INSTANCE.convertBoToInfo(subjectInfoBO);
+        subjectInfo.setIsDeleted(IsDeletedFlagEnum.UN_DELETED.getCode());
         subjectInfoService.insert(subjectInfo); // 主表插入完成
         // 2.插入题目具体类型的表
+        subjectInfoBO.setId(subjectInfo.getId()); // 把主键设置一下
         subjectTypeHandlerFactory.getHandler(subjectInfoBO.getSubjectType()).add(subjectInfoBO);
         // 3.插入题目与标签的对应关系（多对多）
         List<Integer> categoryIds = subjectInfoBO.getCategoryIds(); // 这个题目有哪些分类
