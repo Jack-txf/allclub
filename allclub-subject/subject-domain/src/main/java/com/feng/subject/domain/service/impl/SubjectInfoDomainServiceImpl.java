@@ -1,10 +1,13 @@
 package com.feng.subject.domain.service.impl;
 
 import com.alibaba.fastjson.JSON;
+import com.feng.subject.common.eneity.PageResult;
 import com.feng.subject.common.enums.IsDeletedFlagEnum;
 import com.feng.subject.domain.convert.SubjectInfoConverter;
 import com.feng.subject.domain.entity.SubjectInfoBO;
+import com.feng.subject.domain.entity.SubjectOptionBO;
 import com.feng.subject.domain.service.SubjectInfoDomainService;
+import com.feng.subject.domain.strategy.SubjectTypeHandler;
 import com.feng.subject.domain.strategy.SubjectTypeHandlerFactory;
 import com.feng.subject.infra.basic.entity.SubjectInfo;
 import com.feng.subject.infra.basic.entity.SubjectMapping;
@@ -15,7 +18,6 @@ import org.springframework.stereotype.Service;
 import javax.annotation.Resource;
 import java.util.LinkedList;
 import java.util.List;
-
 @Service("subjectInfoDomainService")
 @Slf4j
 public class SubjectInfoDomainServiceImpl implements SubjectInfoDomainService {
@@ -57,5 +59,47 @@ public class SubjectInfoDomainServiceImpl implements SubjectInfoDomainService {
             });
         });
         subjectMappingService.batchInsert(mappingList);
+    }
+
+    /*
+    题目列表 分页查询
+     */
+    @Override
+    public PageResult<SubjectInfoBO> getSubjectPage(SubjectInfoBO subjectInfoBO) {
+        PageResult<SubjectInfoBO> pageResult = new PageResult<>();
+        pageResult.setPageNo(subjectInfoBO.getPageNo());
+        pageResult.setPageSize(subjectInfoBO.getPageSize());
+        // 从哪个序号开始的
+        int start = (subjectInfoBO.getPageNo() - 1) * subjectInfoBO.getPageSize();
+        // BO转entity
+        SubjectInfo subjectInfo = SubjectInfoConverter.INSTANCE.convertBoToInfo(subjectInfoBO);
+        // 查询
+        int count = subjectInfoService.countByCondition(subjectInfo, subjectInfoBO.getCategoryId()
+                , subjectInfoBO.getLabelId());
+        if (count == 0) { // 空
+            return pageResult;
+        }
+        // 不空
+        List<SubjectInfo> subjectInfoList = subjectInfoService.queryPage(subjectInfo, subjectInfoBO.getCategoryId()
+                , subjectInfoBO.getLabelId(), start, subjectInfoBO.getPageSize());
+        // entityList转boList
+        List<SubjectInfoBO> subjectInfoBOS = SubjectInfoConverter.INSTANCE.convertListInfoToBO(subjectInfoList);
+
+        pageResult.setRecords(subjectInfoBOS);
+        pageResult.setTotal(count);
+        return pageResult;
+    }
+
+    /*
+    获取题目的详细信息
+     */
+    @Override
+    public SubjectInfoBO querySubjectInfo(SubjectInfoBO subjectInfoBO) {
+        // 通过id查询到 题目主表里面的信息
+        SubjectInfo subjectInfo = subjectInfoService.queryById(subjectInfoBO.getId());
+        SubjectTypeHandler handler = subjectTypeHandlerFactory.getHandler(subjectInfo.getSubjectType()); // 策略模式
+        SubjectOptionBO optionBO = handler.query(subjectInfo.getId().intValue());
+
+        return null;
     }
 }

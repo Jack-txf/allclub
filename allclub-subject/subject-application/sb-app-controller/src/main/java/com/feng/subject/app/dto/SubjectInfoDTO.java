@@ -1,5 +1,6 @@
 package com.feng.subject.app.dto;
 
+import com.feng.subject.common.eneity.PageInfo;
 import lombok.Data;
 
 import java.io.Serializable;
@@ -12,7 +13,7 @@ import java.util.List;
  * @date: 2023/10/5
  */
 @Data
-public class SubjectInfoDTO implements Serializable {
+public class SubjectInfoDTO extends PageInfo implements Serializable {
 
     /**
      * 主键
@@ -31,7 +32,7 @@ public class SubjectInfoDTO implements Serializable {
      */
     private String settleName;
     /**
-     * 题目类型 1单选 2多选 3判断 4简答
+     * 题目类型 1单选 2多选 3判断题 4简答题目
      */
     private Integer subjectType;
     /**
@@ -62,5 +63,53 @@ public class SubjectInfoDTO implements Serializable {
      * 答案选项
      */
     private List<SubjectAnswerDTO> optionList;
+
+    // 额外信息==============
+    /**
+     * 标签name
+     */
+    private List<String> labelName;
+
+    private Long categoryId;
+
+    private Long labelId;
+
+    private String keyWord;
+
+    /**
+     * 创建人昵称
+     */
+    private String createUser;
+
+    /**
+     * 创建人头像
+     */
+    private String createUserAvatar;
+
+    /**
+     * 题目数量
+     */
+    private Integer subjectCount;
+
+    /**
+     * 是否被当前用户点赞
+     */
+    private Boolean liked;
+
+    /**
+     * 当前题目点赞的数量
+     */
+    private Integer likedCount;
+
+    /**
+     * 下一题
+     */
+    private Long nextSubjectId;
+
+    /**
+     * 上一题
+     */
+    private Long lastSubjectId;
+
 }
 

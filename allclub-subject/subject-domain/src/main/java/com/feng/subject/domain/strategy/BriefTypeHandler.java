@@ -5,6 +5,7 @@ import com.feng.subject.common.enums.IsDeletedFlagEnum;
 import com.feng.subject.common.enums.SubjectInfoTypeEnum;
 import com.feng.subject.domain.convert.BriefSubjectConverter;
 import com.feng.subject.domain.entity.SubjectInfoBO;
+import com.feng.subject.domain.entity.SubjectOptionBO;
 import com.feng.subject.infra.basic.entity.SubjectBrief;
 import com.feng.subject.infra.basic.service.SubjectBriefService;
 import org.springframework.stereotype.Component;
@@ -36,4 +37,15 @@ public class BriefTypeHandler implements SubjectTypeHandler{
         subjectBriefService.insert(subjectBrief);
     }
 
+    @Override
+    public SubjectOptionBO query(int subjectId) {
+        SubjectBrief subjectBrief = new SubjectBrief();
+        subjectBrief.setSubjectId(subjectId);
+        // 得到简答题的信息
+        SubjectBrief result = subjectBriefService.queryByCondition(subjectBrief);
+        // 组装返回值
+        SubjectOptionBO subjectOptionBO = new SubjectOptionBO();
+        subjectOptionBO.setSubjectAnswer(result.getSubjectAnswer());
+        return subjectOptionBO;
+    }
 }

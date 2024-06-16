@@ -1,5 +1,6 @@
 package com.feng.subject.domain.service;
 
+import com.feng.subject.common.eneity.PageResult;
 import com.feng.subject.domain.entity.SubjectInfoBO;
 
 /**
@@ -13,5 +14,9 @@ public interface SubjectInfoDomainService {
      * 新增题目
      */
     void add(SubjectInfoBO subjectInfoBO);
+
+    PageResult<SubjectInfoBO> getSubjectPage(SubjectInfoBO subjectInfoBO);
+
+    SubjectInfoBO querySubjectInfo(SubjectInfoBO subjectInfoBO);
 }
 

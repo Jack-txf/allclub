@@ -15,13 +15,15 @@ import java.util.List;
 public class SubjectOptionBO implements Serializable {
 
     /**
-     * 题目答案
+     * 题目答案  -----------
      */
+    //  简答题专有
     private String subjectAnswer;
 
     /**
      * 答案选项
      */
+    // 选择题，判断题专有
     private List<SubjectAnswerBO> optionList;
 
 }

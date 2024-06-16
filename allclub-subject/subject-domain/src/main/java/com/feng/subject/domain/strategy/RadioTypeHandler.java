@@ -3,7 +3,9 @@ package com.feng.subject.domain.strategy;
 import com.feng.subject.common.enums.IsDeletedFlagEnum;
 import com.feng.subject.common.enums.SubjectInfoTypeEnum;
 import com.feng.subject.domain.convert.RadioSubjectConverter;
+import com.feng.subject.domain.entity.SubjectAnswerBO;
 import com.feng.subject.domain.entity.SubjectInfoBO;
+import com.feng.subject.domain.entity.SubjectOptionBO;
 import com.feng.subject.infra.basic.entity.SubjectRadio;
 import com.feng.subject.infra.basic.service.SubjectRadioService;
 import org.springframework.stereotype.Component;
@@ -42,5 +44,17 @@ public class RadioTypeHandler implements SubjectTypeHandler {
             subjectRadioList.add(subjectRadio);
         });
         subjectRadioService.batchInsert(subjectRadioList);
+    }
+
+    @Override
+    public SubjectOptionBO query(int subjectId) {
+        SubjectRadio subjectRadio = new SubjectRadio();
+        subjectRadio.setSubjectId((long) subjectId);
+        // 得到单选题的信息
+        List<SubjectRadio> result = subjectRadioService.queryByCondition(subjectRadio);
+        List<SubjectAnswerBO> subjectAnswerBOList = RadioSubjectConverter.INSTANCE.convertEntityToBoList(result);
+        SubjectOptionBO subjectOptionBO = new SubjectOptionBO();
+        subjectOptionBO.setOptionList(subjectAnswerBOList);
+        return subjectOptionBO;
     }
 }

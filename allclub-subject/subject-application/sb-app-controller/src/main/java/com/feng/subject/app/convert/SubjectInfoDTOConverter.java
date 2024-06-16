@@ -4,8 +4,11 @@ import com.feng.subject.app.dto.SubjectInfoDTO;
 import com.feng.subject.domain.entity.SubjectInfoBO;
 import org.mapstruct.factory.Mappers;
 
+import java.util.List;
+
 public interface SubjectInfoDTOConverter {
     SubjectInfoDTOConverter INSTANCE = Mappers.getMapper(SubjectInfoDTOConverter.class);
-
     SubjectInfoBO convertDTOToBO(SubjectInfoDTO subjectInfoDTO);
+    SubjectInfoDTO convertBOToDTO(SubjectInfoBO subjectInfoBO);
+    List<SubjectInfoDTO> convertBOToDTOList(List<SubjectInfoBO> subjectInfoBO);
 }
