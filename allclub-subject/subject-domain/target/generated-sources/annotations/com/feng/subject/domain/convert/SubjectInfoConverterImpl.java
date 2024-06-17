@@ -1,6 +1,8 @@
 package com.feng.subject.domain.convert;
 
+import com.feng.subject.domain.entity.SubjectAnswerBO;
 import com.feng.subject.domain.entity.SubjectInfoBO;
+import com.feng.subject.domain.entity.SubjectOptionBO;
 import com.feng.subject.infra.basic.entity.SubjectInfo;
 import java.util.ArrayList;
 import java.util.List;
@@ -8,8 +10,8 @@ import javax.annotation.Generated;
 
 @Generated(
     value = "org.mapstruct.ap.MappingProcessor",
-    date = "2024-06-16T21:39:20+0800",
-    comments = "version: 1.4.2.Final, compiler: javac, environment: Java 1.8.0_381 (Oracle Corporation)"
+    date = "2024-06-17T20:46:08+0800",
+    comments = "version: 1.4.2.Final, compiler: javac, environment: Java 1.8.0_261 (Oracle Corporation)"
 )
 public class SubjectInfoConverterImpl implements SubjectInfoConverter {
 
@@ -45,6 +47,35 @@ public class SubjectInfoConverterImpl implements SubjectInfoConverter {
         }
 
         return list;
+    }
+
+    @Override
+    public SubjectInfoBO convertOptionAndInfoToBo(SubjectOptionBO subjectOptionBO, SubjectInfo subjectInfo) {
+        if ( subjectOptionBO == null && subjectInfo == null ) {
+            return null;
+        }
+
+        SubjectInfoBO subjectInfoBO = new SubjectInfoBO();
+
+        if ( subjectOptionBO != null ) {
+            subjectInfoBO.setSubjectAnswer( subjectOptionBO.getSubjectAnswer() );
+            List<SubjectAnswerBO> list = subjectOptionBO.getOptionList();
+            if ( list != null ) {
+                subjectInfoBO.setOptionList( new ArrayList<SubjectAnswerBO>( list ) );
+            }
+        }
+        if ( subjectInfo != null ) {
+            subjectInfoBO.setId( subjectInfo.getId() );
+            subjectInfoBO.setSubjectName( subjectInfo.getSubjectName() );
+            subjectInfoBO.setSubjectDifficult( subjectInfo.getSubjectDifficult() );
+            subjectInfoBO.setSettleName( subjectInfo.getSettleName() );
+            subjectInfoBO.setSubjectType( subjectInfo.getSubjectType() );
+            subjectInfoBO.setSubjectScore( subjectInfo.getSubjectScore() );
+            subjectInfoBO.setSubjectParse( subjectInfo.getSubjectParse() );
+            subjectInfoBO.setSubjectCount( subjectInfo.getSubjectCount() );
+        }
+
+        return subjectInfoBO;
     }
 
     protected SubjectInfoBO subjectInfoToSubjectInfoBO(SubjectInfo subjectInfo) {

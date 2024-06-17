@@ -21,7 +21,7 @@
         where id = #{id}
     </select>
 
-    <!--查询指定行数据-->
+    <!-- 查询 （不要被这个名字骗了，实际上就是根据传过来的参数查询Subject_brief表里面的数据）-->
     <select id="queryAllByLimit" resultMap="SubjectBriefMap">
         select
           id, subject_id, subject_answer, created_by, created_time, update_by, update_time, is_deleted

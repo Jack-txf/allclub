@@ -2,6 +2,7 @@ package com.feng.subject.domain.entity;
 
 import com.feng.subject.common.eneity.PageInfo;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 import java.io.Serializable;
 import java.util.List;
@@ -12,6 +13,7 @@ import java.util.List;
  * @author: 田小锋
  * @date: 2023/10/5
  */
+@EqualsAndHashCode(callSuper = true)
 @Data
 public class SubjectInfoBO extends PageInfo implements Serializable {
 
@@ -58,6 +60,10 @@ public class SubjectInfoBO extends PageInfo implements Serializable {
      * 标签id
      */
     private List<Integer> labelIds;
+    /**
+     * 标签name
+     */
+    private List<String> labelName;
 
     /**
      * 答案选项

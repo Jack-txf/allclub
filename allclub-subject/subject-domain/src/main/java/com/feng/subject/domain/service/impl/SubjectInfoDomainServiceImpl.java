@@ -10,21 +10,29 @@ import com.feng.subject.domain.service.SubjectInfoDomainService;
 import com.feng.subject.domain.strategy.SubjectTypeHandler;
 import com.feng.subject.domain.strategy.SubjectTypeHandlerFactory;
 import com.feng.subject.infra.basic.entity.SubjectInfo;
+import com.feng.subject.infra.basic.entity.SubjectLabel;
 import com.feng.subject.infra.basic.entity.SubjectMapping;
 import com.feng.subject.infra.basic.service.SubjectInfoService;
+import com.feng.subject.infra.basic.service.SubjectLabelService;
 import com.feng.subject.infra.basic.service.SubjectMappingService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
+
 @Service("subjectInfoDomainService")
 @Slf4j
 public class SubjectInfoDomainServiceImpl implements SubjectInfoDomainService {
     @Resource
     private SubjectInfoService subjectInfoService;
+    @Resource
+    private SubjectLabelService subjectLabelService;
     @Resource
     private SubjectTypeHandlerFactory subjectTypeHandlerFactory;
     @Resource
@@ -102,9 +110,29 @@ public class SubjectInfoDomainServiceImpl implements SubjectInfoDomainService {
     public SubjectInfoBO querySubjectInfo(SubjectInfoBO subjectInfoBO) {
         // 通过id查询到 题目主表里面的信息
         SubjectInfo subjectInfo = subjectInfoService.queryById(subjectInfoBO.getId());
+        if (Objects.isNull(subjectInfo) ) {
+            return null; // 没有值
+        }
+
         SubjectTypeHandler handler = subjectTypeHandlerFactory.getHandler(subjectInfo.getSubjectType()); // 策略模式
         SubjectOptionBO optionBO = handler.query(subjectInfo.getId().intValue());
+        // entity 转 BO
+        SubjectInfoBO bo = SubjectInfoConverter.INSTANCE.convertOptionAndInfoToBo(optionBO, subjectInfo);
 
-        return null;
+        // 设置标签,从subject_mapping里面查询到标签
+        // 设置查询条件
+        SubjectMapping subjectMapping = new SubjectMapping();
+        subjectMapping.setSubjectId(subjectInfo.getId());
+        subjectMapping.setIsDeleted(IsDeletedFlagEnum.UN_DELETED.getCode());
+        // 查询mapping
+        List<SubjectMapping> subjectMappings = subjectMappingService.queryLabelId(subjectMapping);
+        // 从mappinglist里面得到id的list
+        List<Long> labelIds = subjectMappings.stream().map(SubjectMapping::getLabelId).collect(Collectors.toList());
+        // 批量查询
+        List<SubjectLabel> labels = subjectLabelService.batchQueryById(labelIds);
+        List<String> labelNames = labels.stream().map(SubjectLabel::getLabelName).collect(Collectors.toList());
+
+        bo.setLabelName(labelNames);
+        return bo;
     }
 }

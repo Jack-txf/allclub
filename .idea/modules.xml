@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/allclub-subject/allclub-subject.iml" filepath="$PROJECT_DIR$/allclub-subject/allclub-subject.iml" />
+      <module fileurl="file://$PROJECT_DIR$/allclub-subject/subject-application/sb-app-controller/sb-app-controller.iml" filepath="$PROJECT_DIR$/allclub-subject/subject-application/sb-app-controller/sb-app-controller.iml" />
+      <module fileurl="file://$PROJECT_DIR$/allclub-subject/subject-application/sb-app-job/sb-app-job.iml" filepath="$PROJECT_DIR$/allclub-subject/subject-application/sb-app-job/sb-app-job.iml" />
+      <module fileurl="file://$PROJECT_DIR$/allclub-subject/subject-application/sb-app-mq/sb-app-mq.iml" filepath="$PROJECT_DIR$/allclub-subject/subject-application/sb-app-mq/sb-app-mq.iml" />
+      <module fileurl="file://$PROJECT_DIR$/allclub-subject/subject-api/subject-api.iml" filepath="$PROJECT_DIR$/allclub-subject/subject-api/subject-api.iml" />
+      <module fileurl="file://$PROJECT_DIR$/allclub-subject/subject-application/subject-application.iml" filepath="$PROJECT_DIR$/allclub-subject/subject-application/subject-application.iml" />
+      <module fileurl="file://$PROJECT_DIR$/allclub-subject/subject-common/subject-common.iml" filepath="$PROJECT_DIR$/allclub-subject/subject-common/subject-common.iml" />
+      <module fileurl="file://$PROJECT_DIR$/allclub-subject/subject-domain/subject-domain.iml" filepath="$PROJECT_DIR$/allclub-subject/subject-domain/subject-domain.iml" />
+      <module fileurl="file://$PROJECT_DIR$/allclub-subject/subject-infra/subject-infra.iml" filepath="$PROJECT_DIR$/allclub-subject/subject-infra/subject-infra.iml" />
+      <module fileurl="file://$PROJECT_DIR$/allclub-subject/subject-starter/subject-starter.iml" filepath="$PROJECT_DIR$/allclub-subject/subject-starter/subject-starter.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/txf-allclub.iml" filepath="$PROJECT_DIR$/.idea/txf-allclub.iml" />
+    </modules>
+  </component>
+</project>

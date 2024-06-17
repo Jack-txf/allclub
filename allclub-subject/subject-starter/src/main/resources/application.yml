@@ -33,6 +33,10 @@ spring:
 
 logging:
   config: classpath:log4j2-spring.xml
-
 #druid加密公钥
 publicKey: MFwwDQYJKoZIhvcNAQEBBQADSwAwSAJBAL1elCJ5I0u1epkr7bkzUykLXuu5Tu9Nm2R9pdy7K1D+smYVo7rR1Ezu4b1osbriIr7xmUQepPc+a8JPnSVVMzMCAwEAAQ==
+
+# 这里注释掉了，因为自定义了更好看的，详情见infra层的config里面
+#mybatis-plus:
+#  configuration:
+#    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl # mybatis-plus日志打印在控制台

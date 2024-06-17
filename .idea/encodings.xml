@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="Encoding">
+    <file url="file://$PROJECT_DIR$/allclub-subject/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/allclub-subject/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/allclub-subject/subject-api/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/allclub-subject/subject-api/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/allclub-subject/subject-application/sb-app-controller/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/allclub-subject/subject-application/sb-app-controller/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/allclub-subject/subject-application/sb-app-job/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/allclub-subject/subject-application/sb-app-job/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/allclub-subject/subject-application/sb-app-mq/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/allclub-subject/subject-application/sb-app-mq/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/allclub-subject/subject-application/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/allclub-subject/subject-application/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/allclub-subject/subject-common/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/allclub-subject/subject-common/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/allclub-subject/subject-domain/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/allclub-subject/subject-domain/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/allclub-subject/subject-infra/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/allclub-subject/subject-infra/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/allclub-subject/subject-starter/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/allclub-subject/subject-starter/src/main/resources" charset="UTF-8" />
+  </component>
+</project>
