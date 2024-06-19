@@ -1,0 +1,24 @@
+server:
+  port: 8820
+spring:
+  application:
+    name: all-club-gateway
+  cloud:
+    gateway:
+      routes:
+        - id: oss
+          uri: lb://all-club-oss
+          predicates:
+            - Path=/oss/**
+#          filters:
+              #跳过一个前缀，例如访问到网关是/oss/get,实际是/get
+#            - StripPrefix=1
+        - id: auth
+          uri: lb://all-club-auth
+          predicates:
+            - Path=/auth/**
+        - id: subject
+          uri: lb://all-club-subject
+          predicates:
+            - Path=/subject/**
+
