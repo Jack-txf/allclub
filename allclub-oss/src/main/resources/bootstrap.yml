@@ -10,7 +10,8 @@ spring:
         username: nacos
         password: 1q2w3e4r5t6y7u
         group: DEFAULT_GROUP
-        namespace: public
+        # public这个命名空间没有命名空间ID，这个要注释掉，不然会一直循环打印
+#        namespace: public
         file-extension: yaml
         prefix: ${spring.application.name}
       discovery:
