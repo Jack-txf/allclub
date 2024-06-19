@@ -1,0 +1,20 @@
+spring:
+  application:
+    name: all-club-oss
+  profiles:
+    active: dev
+  cloud:
+    nacos:
+      config:
+        server-addr: 47.108.81.82:8848
+        username: nacos
+        password: 1q2w3e4r5t6y7u
+        group: DEFAULT_GROUP
+        namespace: public
+        file-extension: yaml
+        prefix: ${spring.application.name}
+      discovery:
+        enabled: true
+        server-addr: 47.108.81.82:8848
+        username: nacos
+        password: 1q2w3e4r5t6y7u

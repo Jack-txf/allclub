@@ -17,6 +17,7 @@ import java.util.List;
  * @date: 2023/10/14
  */
 @RestController
+@RequestMapping("/oss")
 public class FileController {
     @Resource
     private FileService fileService;

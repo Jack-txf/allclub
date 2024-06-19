@@ -1,14 +1,12 @@
 server:
   port: 8900
-spring:
-  application:
-    name: all-club-osss
+
 minio:
   url: http://47.108.81.82:9000
   accessKey: minioadmin
   secretKey: minioadmin
 
 # 这个是要放在nacos配置中心里面的，动态配置，就可以实现无感切换存储oss的方式
-storage:
-  service:
-    type: minio
+#storage:
+#  service:
+#    type: minio
