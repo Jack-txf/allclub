@@ -83,13 +83,14 @@ public class SubjectLabelDomainServiceImpl implements SubjectLabelDomainService 
             SubjectLabel subjectLabel = new SubjectLabel();
             subjectLabel.setCategoryId(subjectLabelBO.getCategoryId());
             List<SubjectLabel> labelList = subjectLabelService.queryByCondition(subjectLabel);
-            List<SubjectLabelBO> labelResultList = SubjectLabelConverter.INSTANCE.convertLabelToBoList(labelList);
-            return labelResultList;
+            return SubjectLabelConverter.INSTANCE.convertLabelToBoList(labelList);
         }
+        // 是二级分类
         Long categoryId = subjectLabelBO.getCategoryId();
         SubjectMapping subjectMapping = new SubjectMapping();
         subjectMapping.setCategoryId(categoryId);
         subjectMapping.setIsDeleted(IsDeletedFlagEnum.UN_DELETED.getCode());
+
         List<SubjectMapping> mappingList = subjectMappingService.queryLabelId(subjectMapping);
         if (CollectionUtils.isEmpty(mappingList)) {
             return Collections.emptyList();
