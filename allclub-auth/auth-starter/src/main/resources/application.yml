@@ -1,0 +1,38 @@
+server:
+  port: 8810
+spring:
+  application:
+    name: allclub-auth
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    username: root
+    #数据库密码加密
+    password: WqwtJTHxVprKmBkr7MLTtV7r9i9FcVUx7Hs4UhzhAdegjcUkDBN7mD8LXNmDGDXeUNqlVH6YS9eLgS7FUQ2vpQ==
+    url: jdbc:mysql://47.108.81.82:3306/txf_club_db?serverTimezone=Asia/Shanghai&useUnicode=true&characterEncoding=utf8&useSSL=true
+    type: com.alibaba.druid.pool.DruidDataSource
+    druid:
+      initial-size: 20
+      max-active: 100
+      max-wait: 60000
+      min-idle: 20
+      stat-view-servlet:
+        enabled: true
+        url-pattern: /druid/*
+        login-username: admin
+        login-password: 123456
+      filter:
+        stat:
+          enabled: true
+          slow-sql-millis: 2000
+          log-slow-sql: true
+        wall:
+          enabled: true
+        config:
+          enabled: true
+      # druid加密配置
+      connection-properties: config.decrypt=true;config.decrypt.key=${publicKey}
+
+logging:
+  config: classpath:log4j2-spring.xml
+#druid加密公钥
+publicKey: MFwwDQYJKoZIhvcNAQEBBQADSwAwSAJBAL1elCJ5I0u1epkr7bkzUykLXuu5Tu9Nm2R9pdy7K1D+smYVo7rR1Ezu4b1osbriIr7xmUQepPc+a8JPnSVVMzMCAwEAAQ==
