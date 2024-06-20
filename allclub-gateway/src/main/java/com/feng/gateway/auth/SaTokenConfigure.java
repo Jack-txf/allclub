@@ -27,7 +27,7 @@ public class SaTokenConfigure {
                     SaRouter.match("/auth/**", "/auth/user/doLogin", r -> StpUtil.checkRole("admin"));
 
                     SaRouter.match("/oss/**", r -> StpUtil.checkLogin());
-                    SaRouter.match("/subject/subject/add", r -> StpUtil.checkPermission("subject:add"));
+                    SaRouter.match("/subject/add", r -> StpUtil.checkPermission("subject:add"));
                     SaRouter.match("/subject/**", r -> StpUtil.checkLogin());
                 });
     }
