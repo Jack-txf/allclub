@@ -29,6 +29,19 @@
             <artifactId>sa-token-spring-boot-starter</artifactId>
             <version>1.37.0</version>
         </dependency>
+
+        <!-- domain -->
+        <dependency>
+            <groupId>com.feng.auth.domain</groupId>
+            <artifactId>auth-domain</artifactId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
+        <!-- auth-API层 -->
+        <dependency>
+            <groupId>com.feng.auth.api</groupId>
+            <artifactId>auth-api</artifactId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
         <dependency>
             <groupId>com.feng.auth.common</groupId>
             <artifactId>auth-common</artifactId>
