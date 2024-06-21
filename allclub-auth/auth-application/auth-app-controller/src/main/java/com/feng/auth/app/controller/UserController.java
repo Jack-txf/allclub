@@ -21,7 +21,7 @@ import javax.annotation.Resource;
 import java.util.List;
 
 @RestController
-@RequestMapping("/user/")
+@RequestMapping("/auth/user")
 @Slf4j
 public class UserController {
 
@@ -31,7 +31,7 @@ public class UserController {
     /**
      * 用户注册
      */
-    @RequestMapping("register")
+    @RequestMapping("/register")
     public Result<Boolean> register(@RequestBody AuthUserDTO authUserDTO) {
         try {
             if (log.isInfoEnabled()) {
@@ -49,7 +49,7 @@ public class UserController {
     /**
      * 修改用户信息
      */
-    @RequestMapping("update")
+    @RequestMapping("/update")
     public Result<Boolean> update(@RequestBody AuthUserDTO authUserDTO) {
         try {
             if (log.isInfoEnabled()) {
@@ -67,7 +67,7 @@ public class UserController {
     /**
      * 获取用户信息
      */
-    @RequestMapping("getUserInfo")
+    @RequestMapping("/getUserInfo")
     public Result<AuthUserDTO> getUserInfo(@RequestBody AuthUserDTO authUserDTO) {
         try {
             if (log.isInfoEnabled()) {
@@ -86,7 +86,7 @@ public class UserController {
     /**
      * 批量获取用户信息
      */
-    @RequestMapping("listByIds")
+    @RequestMapping("/listByIds")
     public Result<List<AuthUserDTO>> listUserInfoByIds(@RequestBody List<String> userNameList) {
         try {
             if (log.isInfoEnabled()) {
@@ -105,7 +105,7 @@ public class UserController {
     /**
      * 用户退出
      */
-    @RequestMapping("logOut")
+    @RequestMapping("/logOut")
     public Result logOut(@RequestParam String userName) {
         try {
             log.info("UserController.logOut.userName:{}", userName);
@@ -121,14 +121,14 @@ public class UserController {
     /**
      * 删除用户
      */
-    @RequestMapping("delete")
+    @RequestMapping("/delete")
     public Result<Boolean> delete(@RequestBody AuthUserDTO authUserDTO) {
         try {
             if (log.isInfoEnabled()) {
                 log.info("UserController.delete.dto:{}", JSON.toJSONString(authUserDTO));
             }
             AuthUserBO authUserBO = AuthUserDTOConverter.INSTANCE.convertDTOToBO(authUserDTO);
-            return Result.ok(authUserDomainService.update(authUserBO));
+            return Result.ok(authUserDomainService.delete(authUserBO));
         } catch (Exception e) {
             log.error("UserController.update.error:{}", e.getMessage(), e);
             return Result.fail("删除用户信息失败");
@@ -140,9 +140,9 @@ public class UserController {
     }
 
     /**
-     * 用户启用/禁用
+     * 用户启用/禁用 根据用户id来禁用，
      */
-    @RequestMapping("changeStatus")
+    @RequestMapping("/changeStatus")
     public Result<Boolean> changeStatus(@RequestBody AuthUserDTO authUserDTO) {
         try {
             if (log.isInfoEnabled()) {
@@ -150,14 +150,14 @@ public class UserController {
             }
             Preconditions.checkNotNull(authUserDTO.getStatus(), "用户状态不能为空");
             AuthUserBO authUserBO = AuthUserDTOConverter.INSTANCE.convertDTOToBO(authUserDTO);
-            return Result.ok(authUserDomainService.update(authUserBO));
+            return Result.ok(authUserDomainService.changeStatus(authUserBO));
         } catch (Exception e) {
             log.error("UserController.changeStatus.error:{}", e.getMessage(), e);
             return Result.fail("启用/禁用用户信息失败");
         }
     }
 
-    @RequestMapping("doLogin")
+    @RequestMapping("/doLogin")
     public Result<SaTokenInfo> doLogin(@RequestParam("validCode") String validCode) {
         try {
             Preconditions.checkArgument(!StringUtils.isBlank(validCode), "验证码不能为空!");
@@ -169,7 +169,7 @@ public class UserController {
     }
 
     // 查询登录状态，浏览器访问： http://localhost:8081/user/isLogin
-    @RequestMapping("isLogin")
+    @RequestMapping("/isLogin")
     public String isLogin() {
         return "当前会话是否登录：" + StpUtil.isLogin();
     }

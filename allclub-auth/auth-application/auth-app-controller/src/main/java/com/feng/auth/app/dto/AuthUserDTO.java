@@ -5,7 +5,7 @@ import lombok.Data;
 import java.io.Serializable;
 
 /**
- * 用戶信息dto TODO 这个原本是在auth-api层里面的
+ * 用戶信息dto
  *
  * @author: txf
  * @date: 2023/11/1

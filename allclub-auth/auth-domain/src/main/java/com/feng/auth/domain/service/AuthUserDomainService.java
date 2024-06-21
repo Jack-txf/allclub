@@ -34,5 +34,7 @@ public interface AuthUserDomainService {
     AuthUserBO getUserInfo(AuthUserBO authUserBO);
 
     List<AuthUserBO> listUserInfoByIds(List<String> ids);
+
+    Object changeStatus(AuthUserBO authUserBO);
 }
 

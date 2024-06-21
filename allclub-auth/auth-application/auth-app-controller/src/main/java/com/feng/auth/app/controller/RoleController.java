@@ -22,7 +22,7 @@ import javax.annotation.Resource;
  * @date: 2023/11/2
  */
 @RestController
-@RequestMapping("/role/")
+@RequestMapping("/auth/role/")
 @Slf4j
 public class RoleController {
 

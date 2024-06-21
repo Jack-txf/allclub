@@ -22,7 +22,7 @@ import javax.annotation.Resource;
  * @date: 2023/11/2
  */
 @RestController
-@RequestMapping("/permission/")
+@RequestMapping("/auth/permission/")
 @Slf4j
 public class PermissionController {
 

@@ -52,7 +52,7 @@ public class AuthPermissionDomainServiceImpl implements AuthPermissionDomainServ
 
     @Override
     public List<String> getPermission(String userName) {
-        // TODO
+        // TODO 获取用户权限
        return null;
     }
 

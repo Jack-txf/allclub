@@ -57,14 +57,28 @@ public class AuthUserDomainServiceImpl implements AuthUserDomainService {
     @Override
     @SneakyThrows
     @Transactional(rollbackFor = Exception.class)
-    public Boolean register(AuthUserBO authUserBO) { // TODO
-        return true;
+    // TODO 待完善
+    public Boolean register(AuthUserBO authUserBO) {
+        //校验用户是否存在
+        AuthUser existAuthUser = new AuthUser();
+        existAuthUser.setUserName(authUserBO.getUserName());
+        List<AuthUser> existUser = authUserService.queryByCondition(existAuthUser);
+        if (!existUser.isEmpty()) {
+            return true;
+        }
+        // BO -> entity
+        AuthUser user = AuthUserBOConverter.INSTANCE.convertBOToEntity(authUserBO);
+        user.setStatus(AuthUserStatusEnum.OPEN.getCode()); //用户设置为启用
+        user.setIsDeleted(IsDeletedFlagEnum.UN_DELETED.getCode()); // 设置为未删除
+        Integer count = authUserService.insert(user);
+        return count > 0;
     }
 
     @Override
     public Boolean update(AuthUserBO authUserBO) {
         AuthUser authUser = AuthUserBOConverter.INSTANCE.convertBOToEntity(authUserBO);
         Integer count = authUserService.updateByUserName(authUser);
+        //有任何的更新，都要与缓存进行同步的修改
         return count > 0;
     }
 
@@ -104,4 +118,10 @@ public class AuthUserDomainServiceImpl implements AuthUserDomainService {
         return AuthUserBOConverter.INSTANCE.convertEntityToBO(userList);
     }
 
+    @Override
+    public Object changeStatus(AuthUserBO authUserBO) {
+        AuthUser user = AuthUserBOConverter.INSTANCE.convertBOToEntity(authUserBO);
+        Integer update = authUserService.update(user);
+        return update > 0;
+    }
 }
