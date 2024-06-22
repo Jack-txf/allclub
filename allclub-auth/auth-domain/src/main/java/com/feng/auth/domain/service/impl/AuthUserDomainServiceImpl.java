@@ -2,7 +2,7 @@ package com.feng.auth.domain.service.impl;
 
 import cn.dev33.satoken.secure.SaSecureUtil;
 import cn.dev33.satoken.stp.SaTokenInfo;
-import cn.dev33.satoken.stp.StpUtil;
+import com.feng.auth.domain.redis.RedisUtil;
 import com.google.gson.Gson;
 import com.feng.auth.common.enums.AuthUserStatusEnum;
 import com.feng.auth.common.enums.IsDeletedFlagEnum;
@@ -14,7 +14,6 @@ import com.feng.auth.infra.basic.entity.*;
 import com.feng.auth.infra.basic.service.*;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
@@ -43,14 +42,8 @@ public class AuthUserDomainServiceImpl implements AuthUserDomainService {
 
     @Resource
     private AuthRoleService authRoleService;
-
-    private String salt = "chicken";
-
-
-
-    private String authPermissionPrefix = "auth.permission";
-
-    private String authRolePrefix = "auth.role";
+    @Resource
+    private RedisUtil redisUtil;
 
     private static final String LOGIN_PREFIX = "loginCode";
 
@@ -59,7 +52,7 @@ public class AuthUserDomainServiceImpl implements AuthUserDomainService {
     @Transactional(rollbackFor = Exception.class)
     // TODO 待完善
     public Boolean register(AuthUserBO authUserBO) {
-        //校验用户是否存在
+        //1. 校验用户是否存在
         AuthUser existAuthUser = new AuthUser();
         existAuthUser.setUserName(authUserBO.getUserName());
         List<AuthUser> existUser = authUserService.queryByCondition(existAuthUser);
@@ -70,7 +63,42 @@ public class AuthUserDomainServiceImpl implements AuthUserDomainService {
         AuthUser user = AuthUserBOConverter.INSTANCE.convertBOToEntity(authUserBO);
         user.setStatus(AuthUserStatusEnum.OPEN.getCode()); //用户设置为启用
         user.setIsDeleted(IsDeletedFlagEnum.UN_DELETED.getCode()); // 设置为未删除
+        // 密码加密
+        // 加盐
+        String salt = "txf_lh";
+        user.setPassword(SaSecureUtil.md5BySalt(user.getPassword(), salt));
+        // 2.插入user表
         Integer count = authUserService.insert(user);
+        // 给注册的用户一个最初始的角色，normal_user普通用户
+        AuthRole authRole = new AuthRole();
+        authRole.setRoleKey(AuthConstant.NORMAL_USER);
+        AuthRole roleResult = authRoleService.queryByCondition(authRole); // 根据roleKey查到该条角色信息
+        Long roleId = roleResult.getId(); // 角色ID
+        Long userId = user.getId(); // 用户ID
+        AuthUserRole authUserRole = new AuthUserRole();
+        authUserRole.setUserId(userId);
+        authUserRole.setRoleId(roleId);
+        authUserRole.setIsDeleted(IsDeletedFlagEnum.UN_DELETED.getCode()); // 组装用户-角色关联的对象
+        authUserRoleService.insert(authUserRole); // 3.插入用户角色关联表
+
+        //4.把该用户的角色集合，权限集合查出来，存到redis里面去
+        String authRolePrefix = "auth.role";
+        String roleKey = redisUtil.buildKey(authRolePrefix, user.getUserName());
+        List<AuthRole> roleList = new LinkedList<>();
+        roleList.add(authRole); //角色集合
+        redisUtil.set(roleKey, new Gson().toJson(roleList)); // 角色集合存入redis
+
+        AuthRolePermission authRolePermission = new AuthRolePermission();
+        authRolePermission.setRoleId(roleId);
+        List<AuthRolePermission> rolePermissionList = authRolePermissionService.
+                queryByCondition(authRolePermission); // 根绝roleId查到所有权限
+        List<Long> permissionIdList = rolePermissionList.stream()
+                .map(AuthRolePermission::getPermissionId).collect(Collectors.toList()); // 权限的id数组
+        // 通过权限的id数组，查到所有权限的对象集合
+        List<AuthPermission> permissionList = authPermissionService.queryByRoleList(permissionIdList);
+        String authPermissionPrefix = "auth.permission";
+        String permissionKey = redisUtil.buildKey(authPermissionPrefix, user.getUserName());
+        redisUtil.set(permissionKey, new Gson().toJson(permissionList)); // 权限对象集合存入redis
         return count > 0;
     }
 

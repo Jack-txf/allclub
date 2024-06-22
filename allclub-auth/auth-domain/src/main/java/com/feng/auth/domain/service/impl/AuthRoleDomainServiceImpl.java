@@ -22,14 +22,14 @@ public class AuthRoleDomainServiceImpl implements AuthRoleDomainService {
     public Boolean add(AuthRoleBO authRoleBO) {
         AuthRole authRole = AuthRoleBOConverter.INSTANCE.convertBOToEntity(authRoleBO);
         authRole.setIsDeleted(IsDeletedFlagEnum.UN_DELETED.getCode());
-        Integer count = authRoleService.insert(authRole);
+        int count = authRoleService.insert(authRole);
         return count > 0;
     }
 
     @Override
     public Boolean update(AuthRoleBO authRoleBO) {
         AuthRole authRole = AuthRoleBOConverter.INSTANCE.convertBOToEntity(authRoleBO);
-        Integer count = authRoleService.update(authRole);
+        int count = authRoleService.update(authRole);
         return count > 0;
     }
 
@@ -38,7 +38,7 @@ public class AuthRoleDomainServiceImpl implements AuthRoleDomainService {
         AuthRole authRole = new AuthRole();
         authRole.setId(authRoleBO.getId());
         authRole.setIsDeleted(IsDeletedFlagEnum.DELETED.getCode());
-        Integer count = authRoleService.update(authRole);
+        int count = authRoleService.update(authRole);
         return count > 0;
     }
 

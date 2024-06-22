@@ -22,13 +22,16 @@ public class AuthRolePermissionDomainServiceImpl implements AuthRolePermissionDo
     @Override
     public Boolean add(AuthRolePermissionBO authRolePermissionBO) {
         List<AuthRolePermission> rolePermissionList = new LinkedList<>();
-        Long roleId = authRolePermissionBO.getRoleId();
+        Long roleId = authRolePermissionBO.getRoleId(); // 获取角色ID
+        /*
+        一个roleId与多个permissionId对应起来
+         */
         authRolePermissionBO.getPermissionIdList().forEach(permissionId -> {
             AuthRolePermission authRolePermission = new AuthRolePermission();
             authRolePermission.setRoleId(roleId);
             authRolePermission.setPermissionId(permissionId);
-            authRolePermission.setIsDeleted(IsDeletedFlagEnum.UN_DELETED.getCode());
-            rolePermissionList.add(authRolePermission);
+            authRolePermission.setIsDeleted(IsDeletedFlagEnum.UN_DELETED.getCode()); // 设置为未删除
+            rolePermissionList.add(authRolePermission); // (roleId, permissionId)映射插入数据库表中
         });
         int count = authRolePermissionService.batchInsert(rolePermissionList);
         return count > 0;
