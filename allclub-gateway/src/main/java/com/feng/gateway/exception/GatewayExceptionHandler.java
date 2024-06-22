@@ -22,7 +22,7 @@ import reactor.core.publisher.Mono;
  */
 @Component
 public class GatewayExceptionHandler implements ErrorWebExceptionHandler {
-    private ObjectMapper objectMapper = new ObjectMapper();
+    private final ObjectMapper objectMapper = new ObjectMapper();
     @Override
     public Mono<Void> handle(ServerWebExchange serverWebExchange, Throwable throwable) {
         // 得到请求 相应对象
