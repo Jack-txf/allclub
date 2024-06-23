@@ -5,13 +5,17 @@ import com.feng.wx.handler.WxChatMsgHandler;
 import com.feng.wx.utils.MessageUtil;
 import com.feng.wx.utils.SHA1;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import java.util.Map;
 import java.util.Objects;
 
+/*
+ 这个需要开启内网穿透，一定要记得哦。！！！
+ 微信的测试号：
+ https://mp.weixin.qq.com/debug/cgi-bin/sandboxinfo?action=showinfo&t=sandbox/index
+ */
 @RestController
 @RequestMapping("/wx/")
 @Slf4j
@@ -55,7 +59,7 @@ public class WxController {
 
         StringBuilder sb = new StringBuilder();
         sb.append(msgType);
-        if (!StringUtils.isEmpty(event)) {
+        if (!event.isEmpty()) { // 事件不为空
             sb.append(".");
             sb.append(event);
         }

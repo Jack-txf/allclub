@@ -14,7 +14,7 @@ public class WxChatMsgFactory implements InitializingBean {
     @Resource
     private List<WxChatMsgHandler> wxChatMsgHandlerList;
 
-    private Map<WxChatMsgTypeEnum, WxChatMsgHandler> handlerMap = new HashMap<>();
+    private final Map<WxChatMsgTypeEnum, WxChatMsgHandler> handlerMap = new HashMap<>();
 
     public WxChatMsgHandler getHandlerByMsgType(String msgType) {
         WxChatMsgTypeEnum msgTypeEnum = WxChatMsgTypeEnum.getByMsgType(msgType);
