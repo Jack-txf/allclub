@@ -2,6 +2,7 @@ package com.feng.auth.domain.service.impl;
 
 import cn.dev33.satoken.secure.SaSecureUtil;
 import cn.dev33.satoken.stp.SaTokenInfo;
+import cn.dev33.satoken.stp.StpUtil;
 import com.feng.auth.domain.redis.RedisUtil;
 import com.google.gson.Gson;
 import com.feng.auth.common.enums.AuthUserStatusEnum;
@@ -14,6 +15,7 @@ import com.feng.auth.infra.basic.entity.*;
 import com.feng.auth.infra.basic.service.*;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
@@ -30,22 +32,17 @@ public class AuthUserDomainServiceImpl implements AuthUserDomainService {
 
     @Resource
     private AuthUserService authUserService;
-
     @Resource
     private AuthUserRoleService authUserRoleService;
-
     @Resource
     private AuthPermissionService authPermissionService;
-
     @Resource
     private AuthRolePermissionService authRolePermissionService;
-
     @Resource
     private AuthRoleService authRoleService;
     @Resource
     private RedisUtil redisUtil;
-
-    private static final String LOGIN_PREFIX = "loginCode";
+    private static final String LOGIN_PREFIX = "wx-loginCode"; // 微信登录的标记
 
     @Override
     @SneakyThrows
@@ -122,7 +119,17 @@ public class AuthUserDomainServiceImpl implements AuthUserDomainService {
 
     @Override
     public SaTokenInfo doLogin(String validCode) {
-        return null; // TODO
+        // 从Redis中拿到openid
+        String key = redisUtil.buildKey(LOGIN_PREFIX + validCode);
+        String openID = redisUtil.get(key);
+        if (StringUtils.isBlank(openID)) {
+            return null;
+        }
+        AuthUserBO authUserBO = new AuthUserBO();
+        authUserBO.setUserName(openID);
+        this.register(authUserBO); // 这个会导致事务失效啊。。。。那怎么解决呢？
+        StpUtil.login(openID);
+        return StpUtil.getTokenInfo();
     }
 
     @Override
