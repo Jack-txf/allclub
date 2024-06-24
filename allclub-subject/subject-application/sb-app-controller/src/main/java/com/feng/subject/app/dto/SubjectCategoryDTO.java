@@ -2,9 +2,11 @@ package com.feng.subject.app.dto;
 
 // import lombok.Data;
 
+import com.feng.subject.domain.entity.SubjectLabelBO;
 import lombok.Data;
 
 import java.io.Serializable;
+import java.util.List;
 
 /**
  * 题目分类(SubjectCategory)实体类
@@ -45,9 +47,9 @@ public class SubjectCategoryDTO implements Serializable {
      */
     private Integer count;
 
-    // /**
-    //  * 标签bo数量
-    //  */
-    // private List<SubjectLabelBO> labelBOList;
+    /**
+     * 标签信息
+     */
+    private List<SubjectLabelDTO> labelDTOList;
 
 }

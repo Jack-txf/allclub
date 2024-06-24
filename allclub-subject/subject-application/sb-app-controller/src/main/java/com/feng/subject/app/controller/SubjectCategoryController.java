@@ -2,7 +2,9 @@ package com.feng.subject.app.controller;
 
 import com.alibaba.fastjson.JSON;
 import com.feng.subject.app.convert.SubjectCategoryDTOConverter;
+import com.feng.subject.app.convert.SubjectLabelDTOConverter;
 import com.feng.subject.app.dto.SubjectCategoryDTO;
+import com.feng.subject.app.dto.SubjectLabelDTO;
 import com.feng.subject.common.eneity.Result;
 import com.feng.subject.domain.entity.SubjectCategoryBO;
 import com.feng.subject.domain.service.SbCategoryDomainService;
@@ -12,6 +14,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import java.util.LinkedList;
 import java.util.List;
 
 @RestController
@@ -126,5 +129,33 @@ public class SubjectCategoryController {
         }
     }
 
+    /*
+     * 查询分类及标签一次性
+     * 只传进来一个id, 那就是parent_id为0的categoryId！也就是大类的Id
+     */
+    @PostMapping("/queryCategoryAndLabel")
+    public Result<List<SubjectCategoryDTO>> queryCategoryAndLabel(@RequestBody SubjectCategoryDTO subjectCategoryDTO) {
+        try {
+            if (log.isInfoEnabled()) {
+                log.info("SubjectCategoryController.queryCategoryAndLabel.dto:{}"
+                        , JSON.toJSONString(subjectCategoryDTO));
+            }
+            Preconditions.checkNotNull(subjectCategoryDTO.getId(), "分类id不能为空");
+            SubjectCategoryBO subjectCategoryBO = SubjectCategoryDTOConverter.INSTANCE.
+                    convertDtoToCategoryBO(subjectCategoryDTO);
+            List<SubjectCategoryBO> subjectCategoryBOList = sbCategoryDomainService.queryCategoryAndLabel(subjectCategoryBO);
+            List<SubjectCategoryDTO> dtoList = new LinkedList<>();
+            subjectCategoryBOList.forEach(bo -> {
+                SubjectCategoryDTO dto = SubjectCategoryDTOConverter.INSTANCE.convertBoToCategoryDTO(bo);
+                List<SubjectLabelDTO> labelDTOList = SubjectLabelDTOConverter.INSTANCE.convertBOToLabelDTOList(bo.getLabelBOList());
+                dto.setLabelDTOList(labelDTOList);
+                dtoList.add(dto);
+            });
+            return Result.ok(dtoList);
+        } catch (Exception e) {
+            log.error("SubjectCategoryController.queryPrimaryCategory.error:{}", e.getMessage(), e);
+            return Result.fail("查询失败");
+        }
+    }
 
 }

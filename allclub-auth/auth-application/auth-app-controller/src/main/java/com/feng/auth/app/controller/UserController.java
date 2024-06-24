@@ -157,6 +157,7 @@ public class UserController {
         }
     }
 
+    // 微信公众号验证码登录
     @RequestMapping("/doLogin")
     public Result<SaTokenInfo> doLogin(@RequestParam("validCode") String validCode) {
         try {
@@ -168,7 +169,7 @@ public class UserController {
         }
     }
 
-    // 查询登录状态，浏览器访问： http://localhost:8081/user/isLogin
+    // 查询登录状态，浏览器访问： http://localhost:8081/auth/user/isLogin
     @RequestMapping("/isLogin")
     public String isLogin() {
         return "当前会话是否登录：" + StpUtil.isLogin();

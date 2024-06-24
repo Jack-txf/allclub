@@ -5,20 +5,33 @@ import com.feng.subject.common.enums.CategoryTypeEnum;
 import com.feng.subject.common.enums.IsDeletedFlagEnum;
 import com.feng.subject.domain.convert.SubjectCategoryConverter;
 import com.feng.subject.domain.entity.SubjectCategoryBO;
+import com.feng.subject.domain.entity.SubjectLabelBO;
 import com.feng.subject.domain.service.SbCategoryDomainService;
 import com.feng.subject.infra.basic.entity.SubjectCategory;
 import com.feng.subject.infra.basic.service.SubjectCategoryService;
+import com.feng.subject.infra.basic.service.SubjectLabelService;
+import com.feng.subject.infra.basic.service.SubjectMappingService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 
 import javax.annotation.Resource;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.CompletableFuture;
+import java.util.stream.Collectors;
 
 @Service("sbCategoryDomainService")
 @Slf4j
 public class SbCategoryDomainServiceImpl implements SbCategoryDomainService {
     @Resource
     private SubjectCategoryService subjectCategoryService;
+    @Resource
+    private SubjectMappingService subjectMappingService;
+    @Resource
+    private SubjectLabelService subjectLabelService;
+
     @Override
     public void add(SubjectCategoryBO subjectCategoryBO) {
         // BO 需要转换为 数据库中的实体类
@@ -43,6 +56,10 @@ public class SbCategoryDomainServiceImpl implements SbCategoryDomainService {
             log.info("SubjectCategoryController.queryPrimaryCategory.boList:{}",
                     JSON.toJSONString(boList));
         }
+        boList.forEach(bo->{
+            Integer count = subjectCategoryService.querySubjectCount(bo.getId());
+            bo.setCount(count);
+        });
         return boList;
     }
 
@@ -81,5 +98,10 @@ public class SbCategoryDomainServiceImpl implements SbCategoryDomainService {
         category.setIsDeleted(IsDeletedFlagEnum.DELETED.getCode());
         int update = subjectCategoryService.update(category);
         return update > 0;
+    }
+
+    @Override
+    public List<SubjectCategoryBO> queryCategoryAndLabel(SubjectCategoryBO subjectCategoryBO) {
+        return null;
     }
 }

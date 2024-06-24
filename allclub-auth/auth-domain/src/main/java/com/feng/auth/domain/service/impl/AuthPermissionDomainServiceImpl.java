@@ -1,5 +1,6 @@
 package com.feng.auth.domain.service.impl;
 
+import com.feng.auth.domain.redis.RedisUtil;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.feng.auth.common.enums.IsDeletedFlagEnum;
@@ -20,24 +21,24 @@ import java.util.stream.Collectors;
 @Service
 @Slf4j
 public class AuthPermissionDomainServiceImpl implements AuthPermissionDomainService {
-
     @Resource
     private AuthPermissionService authPermissionService;
-
-    private String authPermissionPrefix = "auth.permission";
+    @Resource
+    private RedisUtil redisUtil;
+    private final String authPermissionPrefix = "auth.permission";
 
     @Override
     public Boolean add(AuthPermissionBO authPermissionBO) {
         AuthPermission authPermission = AuthPermissionBOConverter.INSTANCE.convertBOToEntity(authPermissionBO);
         authPermission.setIsDeleted(IsDeletedFlagEnum.UN_DELETED.getCode());
-        Integer count = authPermissionService.insert(authPermission);
+        int count = authPermissionService.insert(authPermission);
         return count > 0;
     }
 
     @Override
     public Boolean update(AuthPermissionBO authPermissionBO) {
         AuthPermission authPermission = AuthPermissionBOConverter.INSTANCE.convertBOToEntity(authPermissionBO);
-        Integer count = authPermissionService.update(authPermission);
+        int count = authPermissionService.update(authPermission);
         return count > 0;
     }
 
@@ -46,14 +47,24 @@ public class AuthPermissionDomainServiceImpl implements AuthPermissionDomainServ
         AuthPermission authPermission = new AuthPermission();
         authPermission.setId(authPermissionBO.getId());
         authPermission.setIsDeleted(IsDeletedFlagEnum.DELETED.getCode());
-        Integer count = authPermissionService.update(authPermission);
+        int count = authPermissionService.update(authPermission);
         return count > 0;
     }
 
+    /*
+    根据用户userName拿到该用户的所有权限
+     */
     @Override
     public List<String> getPermission(String userName) {
-        // TODO 获取用户权限
-       return null;
+        String permissionKey = redisUtil.buildKey(authPermissionPrefix, userName);
+        String permissionValue = redisUtil.get(permissionKey);
+        if (StringUtils.isBlank(permissionValue)) {
+            return Collections.emptyList();
+        }
+        List<AuthPermission> permissionList = new Gson().fromJson(permissionValue,
+                new TypeToken<List<AuthPermission>>() {
+                }.getType());
+        return permissionList.stream().map(AuthPermission::getPermissionKey).collect(Collectors.toList());
     }
 
 }

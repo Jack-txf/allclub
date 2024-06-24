@@ -49,9 +49,9 @@ public class AuthUserDomainServiceImpl implements AuthUserDomainService {
     @Transactional(rollbackFor = Exception.class)
     // TODO 待完善
     public Boolean register(AuthUserBO authUserBO) {
-        //1. 校验用户是否存在
+        //1. 校验用户是否存在 (微信公众号验证码登录)
         AuthUser existAuthUser = new AuthUser();
-        existAuthUser.setUserName(authUserBO.getUserName());
+        existAuthUser.setUserName(authUserBO.getUserName()); // 这里的userName是存的openID
         List<AuthUser> existUser = authUserService.queryByCondition(existAuthUser);
         if (!existUser.isEmpty()) {
             return true;
@@ -117,6 +117,7 @@ public class AuthUserDomainServiceImpl implements AuthUserDomainService {
         return count > 0;
     }
 
+    // TODO 待完善
     @Override
     public SaTokenInfo doLogin(String validCode) {
         // 从Redis中拿到openid
@@ -128,7 +129,7 @@ public class AuthUserDomainServiceImpl implements AuthUserDomainService {
         AuthUserBO authUserBO = new AuthUserBO();
         authUserBO.setUserName(openID);
         this.register(authUserBO); // 这个会导致事务失效啊。。。。那怎么解决呢？
-        StpUtil.login(openID);
+        StpUtil.login(openID); // 这里是openID
         return StpUtil.getTokenInfo();
     }
 
