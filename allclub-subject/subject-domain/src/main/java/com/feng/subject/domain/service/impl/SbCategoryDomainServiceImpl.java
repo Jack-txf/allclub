@@ -107,6 +107,7 @@ public class SbCategoryDomainServiceImpl implements SbCategoryDomainService {
 
     /*
     点击一个大类之后，直接查出该大类下的二级分类及其对应的标签，故传过来的categoryId在数据库中，他的parentID必是0，传过来的必定是顶级分类！
+    两种方式：
     1.顺序查询，遍历二级分类的数组，查询每个二级分类对应的标签
     2.多线程异步查询，并行查询每个二级分类对应的标签
      */
