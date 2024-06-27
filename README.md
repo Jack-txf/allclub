@@ -8,3 +8,5 @@ Gitee 是 OSCHINA 推出的基于 Git 的代码托管平台（同时支持 SVN�
 需要注意的：
 minio有七天限制，
 sa-token
+
+systemctl list-unit-files 查看服务启动项
