@@ -73,4 +73,6 @@ sa-token:
   token-style: random-32
   # 是否输出操作日志
   is-log: true
+  # token具体形式为：   satoken: "txf xxxx-xxxx-xxxx-xxxx" 有txf的前缀
+  # 也就是说前端只需要按这种格式发送请求的时候携带这种token，sa-token框架就会自动帮你从header里面提取出token了
   token-prefix: txf

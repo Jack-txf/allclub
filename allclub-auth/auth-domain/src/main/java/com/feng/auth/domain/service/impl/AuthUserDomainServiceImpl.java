@@ -129,7 +129,7 @@ public class AuthUserDomainServiceImpl implements AuthUserDomainService {
         AuthUserBO authUserBO = new AuthUserBO();
         authUserBO.setUserName(openID);
         this.register(authUserBO); // 这个会导致事务失效啊。。。。那怎么解决呢？
-        StpUtil.login(openID); // 这里是openID
+        StpUtil.login(openID); // 这里是openID，===========sa-token登录是openID作为标识的!!!!
         return StpUtil.getTokenInfo();
     }
 
