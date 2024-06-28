@@ -42,6 +42,12 @@
             <artifactId>subject-common</artifactId>
             <version>1.0-SNAPSHOT</version>
         </dependency>
+        <!-- 远程调用auth的接口 -->
+        <dependency>
+            <groupId>com.feng.auth.api</groupId>
+            <artifactId>auth-api</artifactId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
         <!-- &lt;!&ndash; Lombok &ndash;&gt; -->
         <!-- <dependency> -->
         <!--     <groupId>org.projectlombok</groupId> -->

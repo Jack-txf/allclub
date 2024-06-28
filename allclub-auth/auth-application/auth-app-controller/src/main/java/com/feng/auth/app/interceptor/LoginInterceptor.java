@@ -1,6 +1,6 @@
-package com.feng.subject.app.interceptor;
+package com.feng.auth.app.interceptor;
 
-import com.feng.subject.app.context.UserContextHolder;
+import com.feng.auth.app.context.UserContextHolder;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.lang.Nullable;
 import org.springframework.web.servlet.HandlerInterceptor;

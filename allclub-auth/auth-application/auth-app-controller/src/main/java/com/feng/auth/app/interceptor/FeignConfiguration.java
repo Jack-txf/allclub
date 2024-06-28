@@ -1,4 +1,4 @@
-package com.feng.subject.app.interceptor;
+package com.feng.auth.app.interceptor;
 
 import feign.RequestInterceptor;
 import org.springframework.context.annotation.Bean;
