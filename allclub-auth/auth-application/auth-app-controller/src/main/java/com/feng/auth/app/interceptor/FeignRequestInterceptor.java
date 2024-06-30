@@ -1,4 +1,4 @@
-package com.feng.subject.app.interceptor;
+package com.feng.auth.app.interceptor;
 
 import feign.RequestInterceptor;
 import feign.RequestTemplate;
@@ -12,10 +12,14 @@ import java.util.Objects;
 
 /**
  * Feign请求拦截器
+ *
  * @author: txf
  * @date: 2023/12/3
  */
 /*
+前端请求头(token) -> 网关解析token(loginId写入请求头) -> 微服务1拦截器(将loginId放入本地线程变量)
+    -> 调用微服务1之前(拦截请求，将loginId写入请求头)  --> 微服务2拦截器(将loginId放入本地线程变量)
+
  * 为什么需要这个？
  * 流程1：网关 -> 微服务1。没有微服务之间的调用
  *      网关层有拦截器，将id写入header，这个请求进入微服务1，微服务1的拦截器可以检测到发来请求中的header情况
@@ -26,13 +30,19 @@ import java.util.Objects;
  */
 @Component
 public class FeignRequestInterceptor implements RequestInterceptor {
-
+    /*
+    发送请求之前，就会被这个拦截器拦截到
+     */
     @Override
     public void apply(RequestTemplate requestTemplate) {
         ServletRequestAttributes requestAttributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
         HttpServletRequest request = requestAttributes.getRequest();
-        if (Objects.nonNull(request)) { //对象不空
+        if (Objects.nonNull(request)) {
             String loginId = request.getHeader("loginId");
+            /*
+            这里request里面不是有header吗？
+            注意，远程调用是通过requestTemplate的，所以下面才会有那几行代码
+             */
             if (StringUtils.isNotBlank(loginId)) {
                 requestTemplate.header("loginId", loginId);
             }
