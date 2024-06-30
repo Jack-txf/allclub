@@ -7,23 +7,25 @@ import com.feng.subject.domain.convert.SubjectCategoryConverter;
 import com.feng.subject.domain.entity.SubjectCategoryBO;
 import com.feng.subject.domain.entity.SubjectLabelBO;
 import com.feng.subject.domain.service.SbCategoryDomainService;
+import com.feng.subject.domain.utils.CacheUtil;
 import com.feng.subject.infra.basic.entity.SubjectCategory;
 import com.feng.subject.infra.basic.entity.SubjectLabel;
 import com.feng.subject.infra.basic.entity.SubjectMapping;
 import com.feng.subject.infra.basic.service.SubjectCategoryService;
 import com.feng.subject.infra.basic.service.SubjectLabelService;
 import com.feng.subject.infra.basic.service.SubjectMappingService;
+import com.google.common.cache.Cache;
+import com.google.common.cache.CacheBuilder;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
 import javax.annotation.Resource;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 @Service("sbCategoryDomainService")
@@ -37,6 +39,8 @@ public class SbCategoryDomainServiceImpl implements SbCategoryDomainService {
     private SubjectLabelService subjectLabelService;
     @Resource
     private ThreadPoolExecutor labelThreadPool;
+    @Resource
+    private CacheUtil<String, SubjectCategoryBO> cacheUtil;
 
     @Override
     public void add(SubjectCategoryBO subjectCategoryBO) {
@@ -114,6 +118,13 @@ public class SbCategoryDomainServiceImpl implements SbCategoryDomainService {
     @Override
     public List<SubjectCategoryBO> queryCategoryAndLabel(SubjectCategoryBO subjectCategoryBO) {
         Long id = subjectCategoryBO.getId(); // categoryId
+        String cacheKey = "categoryAndLabel." + id;
+        List<SubjectCategoryBO> categoryBOList;
+        categoryBOList = cacheUtil.getResult(cacheKey,
+                SubjectCategoryBO.class, (key) -> getSubjectCategoryBOList(id));
+        return categoryBOList;
+    }
+    private List<SubjectCategoryBO> getSubjectCategoryBOList(Long id) {
         SubjectCategory subjectCategory = new SubjectCategory();
         subjectCategory.setParentId(id);
         subjectCategory.setIsDeleted(IsDeletedFlagEnum.UN_DELETED.getCode());
@@ -144,8 +155,10 @@ public class SbCategoryDomainServiceImpl implements SbCategoryDomainService {
         });
         return categoryBOList;
     }
+
     /*
-    一个categoryID 对应 多个标签（只有一个entry）
+        根据categoryId查询其对应的标签：
+        一个categoryID 对应 多个标签（只有一个entry）
      */
     private Map<Long, List<SubjectLabelBO>> getLabelBOList(SubjectCategoryBO category) {
         if (log.isInfoEnabled()) {
