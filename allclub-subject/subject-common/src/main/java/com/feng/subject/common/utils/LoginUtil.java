@@ -1,6 +1,6 @@
-package com.feng.subject.app.utils;
+package com.feng.subject.common.utils;
 
-import com.feng.subject.app.context.UserContextHolder;
+import com.feng.subject.common.context.UserContextHolder;
 
 public class LoginUtil {
     public static String getUserId() {
