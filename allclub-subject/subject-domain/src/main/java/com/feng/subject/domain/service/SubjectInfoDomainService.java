@@ -2,6 +2,7 @@ package com.feng.subject.domain.service;
 
 import com.feng.subject.common.eneity.PageResult;
 import com.feng.subject.domain.entity.SubjectInfoBO;
+import com.feng.subject.infra.basic.espojo.SubjectInfoEs;
 
 /**
  * 题目领域服务
@@ -18,5 +19,7 @@ public interface SubjectInfoDomainService {
     PageResult<SubjectInfoBO> getSubjectPage(SubjectInfoBO subjectInfoBO);
 
     SubjectInfoBO querySubjectInfo(SubjectInfoBO subjectInfoBO);
+
+    PageResult<SubjectInfoEs> getSubjectPageBySearch(SubjectInfoBO subjectInfoBO);
 }
 

@@ -30,6 +30,18 @@ spring:
           enabled: true
       # druid加密配置
       connection-properties: config.decrypt=true;config.decrypt.key=${publicKey}
+#  elasticsearch:
+#    rest:
+#      uris: http://47.108.252.155:9200
+#      username: elastic
+#      password: TXFtxf1121512752
+es:
+  cluster:
+    esConfigs[0]:
+      name: dbcee53dd3da
+      nodes: 47.108.252.155:9200 #一个集群可以有多个ip
+      username: elastic
+      password: TXFtxf1121512752
 
 logging:
   config: classpath:log4j2-spring.xml

@@ -3,6 +3,7 @@ package com.feng.subject.domain.service.impl;
 import com.alibaba.fastjson.JSON;
 import com.feng.subject.common.eneity.PageResult;
 import com.feng.subject.common.enums.IsDeletedFlagEnum;
+import com.feng.subject.common.utils.IdWorkerUtil;
 import com.feng.subject.domain.convert.SubjectInfoConverter;
 import com.feng.subject.domain.entity.SubjectInfoBO;
 import com.feng.subject.domain.entity.SubjectOptionBO;
@@ -12,6 +13,8 @@ import com.feng.subject.domain.strategy.SubjectTypeHandlerFactory;
 import com.feng.subject.infra.basic.entity.SubjectInfo;
 import com.feng.subject.infra.basic.entity.SubjectLabel;
 import com.feng.subject.infra.basic.entity.SubjectMapping;
+import com.feng.subject.infra.basic.espojo.SubjectInfoEs;
+import com.feng.subject.infra.basic.esservice.EsSubjectService;
 import com.feng.subject.infra.basic.service.SubjectInfoService;
 import com.feng.subject.infra.basic.service.SubjectLabelService;
 import com.feng.subject.infra.basic.service.SubjectMappingService;
@@ -20,10 +23,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service("subjectInfoDomainService")
@@ -37,6 +37,8 @@ public class SubjectInfoDomainServiceImpl implements SubjectInfoDomainService {
     private SubjectTypeHandlerFactory subjectTypeHandlerFactory;
     @Resource
     private SubjectMappingService subjectMappingService;
+    @Resource
+    private EsSubjectService esSubjectService;
 
     @Override
     @Transactional(rollbackFor = Exception.class)
@@ -45,7 +47,7 @@ public class SubjectInfoDomainServiceImpl implements SubjectInfoDomainService {
             log.info("info.SubjectInfoDomainServiceImpl.add: {}", JSON.toJSONString(subjectInfoBO));
         }
         /*
-        !!!!
+        !!!!两种方式
         1. 传统用if判断添加的题目的类型，if会很多.
         2. 采用工厂+策略模式添加题目
          */
@@ -72,6 +74,16 @@ public class SubjectInfoDomainServiceImpl implements SubjectInfoDomainService {
             });
         });
         subjectMappingService.batchInsert(mappingList);
+        // 4.题目同步到es里面去
+        SubjectInfoEs subjectInfoEs = new SubjectInfoEs();
+        subjectInfoEs.setDocId(new IdWorkerUtil(1, 1, 1).nextId());
+        subjectInfoEs.setSubjectId(subjectInfo.getId());
+        subjectInfoEs.setSubjectAnswer(subjectInfoBO.getSubjectAnswer());
+        subjectInfoEs.setCreateTime(new Date().getTime());
+        subjectInfoEs.setCreateUser("田小锋");
+        subjectInfoEs.setSubjectName(subjectInfo.getSubjectName());
+        subjectInfoEs.setSubjectType(subjectInfo.getSubjectType());
+        esSubjectService.insert(subjectInfoEs);
     }
 
     /*
@@ -134,5 +146,14 @@ public class SubjectInfoDomainServiceImpl implements SubjectInfoDomainService {
 
         bo.setLabelName(labelNames);
         return bo;
+    }
+
+    @Override
+    public PageResult<SubjectInfoEs> getSubjectPageBySearch(SubjectInfoBO subjectInfoBO) {
+        SubjectInfoEs subjectInfoEs = new SubjectInfoEs();
+        subjectInfoEs.setPageNo(subjectInfoBO.getPageNo());
+        subjectInfoEs.setPageSize(subjectInfoBO.getPageSize());
+        subjectInfoEs.setKeyWord(subjectInfoBO.getKeyWord()); // 构建es查询的条件（关键词查询,高亮显示）
+        return esSubjectService.querySubjectList(subjectInfoEs);
     }
 }
