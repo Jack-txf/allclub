@@ -4,6 +4,8 @@ import com.feng.subject.common.eneity.PageResult;
 import com.feng.subject.domain.entity.SubjectInfoBO;
 import com.feng.subject.infra.basic.espojo.SubjectInfoEs;
 
+import java.util.List;
+
 /**
  * 题目领域服务
  * @author: 田小锋
@@ -21,5 +23,7 @@ public interface SubjectInfoDomainService {
     SubjectInfoBO querySubjectInfo(SubjectInfoBO subjectInfoBO);
 
     PageResult<SubjectInfoEs> getSubjectPageBySearch(SubjectInfoBO subjectInfoBO);
+
+    List<SubjectInfoBO> getContributeList();
 }
 

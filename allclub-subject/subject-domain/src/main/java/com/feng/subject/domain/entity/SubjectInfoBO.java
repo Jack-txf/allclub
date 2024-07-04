@@ -74,6 +74,8 @@ public class SubjectInfoBO extends PageInfo implements Serializable {
     private Long categoryId;
     private Long labelId;
     private String keyWord;
+
+    //=============排行榜
     /**
      * 创建人昵称
      */
@@ -86,6 +88,7 @@ public class SubjectInfoBO extends PageInfo implements Serializable {
      * 题目数量
      */
     private Integer subjectCount;
+    //=======================================end
     /**
      * 是否被当前用户点赞
      */
