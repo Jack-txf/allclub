@@ -52,3 +52,18 @@ publicKey: MFwwDQYJKoZIhvcNAQEBBQADSwAwSAJBAL1elCJ5I0u1epkr7bkzUykLXuu5Tu9Nm2R9p
 #mybatis-plus:
 #  configuration:
 #    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl # mybatis-plus日志打印在控制台
+
+# xxl-job
+xxl:
+  job:
+    admin:
+      addresses: http://127.0.0.1:7900/xxl-job-admin
+    accessToken: default_token
+    # 执行器的基本属性
+    executor:
+      appname: txf-club-subjcet
+      address:
+      ip: 127.0.0.1
+      port: 9999
+      logpath: /data/applogs/xxl-job/jobhandler
+      logretentiondays: 30

@@ -20,7 +20,7 @@ import javax.annotation.Resource;
 /**
  * 题目点赞表 controller
  *
- * @author jingdianjichi
+ * @author 田小锋
  * @since 2024-01-07 23:08:45
  */
 @RestController
@@ -31,8 +31,8 @@ public class SubjectLikedController {
     @Resource
     private SubjectLikedDomainService subjectLikedDomainService;
 
-    /**
-     * 新增题目点赞表
+    /*
+     * 新增题目点赞表，用户点赞题目
      */
     @RequestMapping("add")
     public Result<Boolean> add(@RequestBody SubjectLikedDTO subjectLikedDTO) {
@@ -53,7 +53,6 @@ public class SubjectLikedController {
             log.error("SubjectLikedController.register.error:{}", e.getMessage(), e);
             return Result.fail("新增题目点赞表失败");
         }
-
     }
 
 

@@ -10,6 +10,7 @@ import com.feng.subject.domain.entity.SubjectInfoBO;
 import com.feng.subject.domain.entity.SubjectOptionBO;
 import com.feng.subject.domain.redis.RedisUtil;
 import com.feng.subject.domain.service.SubjectInfoDomainService;
+import com.feng.subject.domain.service.SubjectLikedDomainService;
 import com.feng.subject.domain.strategy.SubjectTypeHandler;
 import com.feng.subject.domain.strategy.SubjectTypeHandlerFactory;
 import com.feng.subject.infra.basic.entity.SubjectInfo;
@@ -49,6 +50,8 @@ public class SubjectInfoDomainServiceImpl implements SubjectInfoDomainService {
     private UserRpc userRpc;
     @Resource
     private RedisUtil redisUtil;
+    @Resource
+    private SubjectLikedDomainService subjectLikedDomainService;
     private static final String RANK_KEY = "subject_rank";
 
     @Override
@@ -158,6 +161,10 @@ public class SubjectInfoDomainServiceImpl implements SubjectInfoDomainService {
         List<String> labelNames = labels.stream().map(SubjectLabel::getLabelName).collect(Collectors.toList());
 
         bo.setLabelName(labelNames);
+
+        //设置点赞属性
+        bo.setLiked(subjectLikedDomainService.isLiked(subjectInfoBO.getId().toString(), LoginUtil.getUserId()));
+        bo.setLikedCount(subjectLikedDomainService.getLikedCount(subjectInfoBO.getId().toString()));
         return bo;
     }
 

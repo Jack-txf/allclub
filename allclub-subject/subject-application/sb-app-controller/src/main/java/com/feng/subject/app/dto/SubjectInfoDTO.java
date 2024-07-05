@@ -76,6 +76,7 @@ public class SubjectInfoDTO extends PageInfo implements Serializable {
 
     private String keyWord;
 
+    //=============排行榜
     /**
      * 创建人昵称
      */
@@ -90,17 +91,19 @@ public class SubjectInfoDTO extends PageInfo implements Serializable {
      * 题目数量
      */
     private Integer subjectCount;
+    //============================end
 
+    //============点赞
     /**
      * 是否被当前用户点赞
      */
     private Boolean liked;
 
     /**
-     * 当前题目点赞的数量
+     * 当前题目被点赞的数量
      */
     private Integer likedCount;
-
+    //==========end
     /**
      * 下一题
      */

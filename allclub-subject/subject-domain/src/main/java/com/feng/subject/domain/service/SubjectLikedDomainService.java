@@ -18,7 +18,7 @@ public interface SubjectLikedDomainService {
     void add(SubjectLikedBO subjectLikedBO);
 
     /**
-     * 获取当前是否被点赞过
+     * 获取当前题目是否被该用户点赞过
      */
     Boolean isLiked(String subjectId, String userId);
 

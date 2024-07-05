@@ -31,7 +31,7 @@ import java.util.Objects;
  * @author txf
  * @since 2024-01-07 23:08:45
  */
-@Service
+@Service("subjectLikedDomainService")
 @Slf4j
 public class SubjectLikedDomainServiceImpl implements SubjectLikedDomainService {
 
@@ -47,19 +47,33 @@ public class SubjectLikedDomainServiceImpl implements SubjectLikedDomainService 
     // @Resource
     // private RocketMQTemplate rocketMQTemplate;
 
+    /*点赞关系的key-hash (总key)
+        SUBJECT_LIKED_KEY:（总key）
+            hashKey1:status
+            hashKey2:status
+            hashKey3:status
+            ....
+     */
     private static final String SUBJECT_LIKED_KEY = "subject.liked";
-
+    /* 题目被点赞的次数 -key (string)
+        SUBJECT_LIKED_COUNT_KEY.subjectId1:10
+        SUBJECT_LIKED_COUNT_KEY.subjectId2:26
+        ....
+     */
     private static final String SUBJECT_LIKED_COUNT_KEY = "subject.liked.count";
-
+    /* 点赞详情key--KEY.subjectId.openId，表示该题目被该用户点赞了
+        SUBJECT_LIKED_DETAIL_KEY.subjectId1.likeUserId1
+        ....
+     */
     private static final String SUBJECT_LIKED_DETAIL_KEY = "subject.liked.detail";
 
     @Override
     public void add(SubjectLikedBO subjectLikedBO) {
         Long subjectId = subjectLikedBO.getSubjectId();
         String likeUserId = subjectLikedBO.getLikeUserId();
-        Integer status = subjectLikedBO.getStatus();
-//        String hashKey = buildSubjectLikedKey(subjectId.toString(), likeUserId);
-//        redisUtil.putHash(SUBJECT_LIKED_KEY, hashKey, status);
+        Integer status = subjectLikedBO.getStatus(); // userId(username:openId) 点赞（1） subjectId
+       String hashKey = buildSubjectLikedKey(subjectId.toString(), likeUserId);
+       redisUtil.putHash(SUBJECT_LIKED_KEY, hashKey, status); // 存入redis
 
         SubjectLikedMessage subjectLikedMessage = new SubjectLikedMessage();
         subjectLikedMessage.setSubjectId(subjectId);
@@ -67,19 +81,17 @@ public class SubjectLikedDomainServiceImpl implements SubjectLikedDomainService 
         subjectLikedMessage.setStatus(status);
         // rocketMQTemplate.convertAndSend("subject-liked", JSON.toJSONString(subjectLikedMessage));
 
-
-
-        String detailKey = SUBJECT_LIKED_DETAIL_KEY + "." + subjectId + "." + likeUserId;
-        String countKey = SUBJECT_LIKED_COUNT_KEY + "." + subjectId;
+        String detailKey = SUBJECT_LIKED_DETAIL_KEY + "." + subjectId + "." + likeUserId; // 点赞关系：(key)
+        String countKey = SUBJECT_LIKED_COUNT_KEY + "." + subjectId; // 该题目被点赞的次数key
         if (SubjectLikedStatusEnum.LIKED.getCode() == status) {
-            redisUtil.increment(countKey, 1);
+            redisUtil.increment(countKey, 1); // 点赞就+1
             redisUtil.set(detailKey, "1");
         } else {
             Integer count = redisUtil.getInt(countKey);
             if (Objects.isNull(count) || count <= 0) {
                 return;
             }
-            redisUtil.increment(countKey, -1);
+            redisUtil.increment(countKey, -1); // 取消点赞就-1
             redisUtil.del(detailKey);
         }
     }
