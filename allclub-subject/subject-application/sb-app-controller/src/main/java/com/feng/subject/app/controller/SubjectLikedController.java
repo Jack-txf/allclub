@@ -59,7 +59,7 @@ public class SubjectLikedController {
     /**
      * 查询我的点赞列表
      */
-    @PostMapping("/getSubjectLikedPage")
+    @PostMapping("getSubjectLikedPage")
     public Result<PageResult<SubjectLikedDTO>> getSubjectLikedPage(@RequestBody SubjectLikedDTO subjectLikedDTO) {
         try {
             if (log.isInfoEnabled()) {
