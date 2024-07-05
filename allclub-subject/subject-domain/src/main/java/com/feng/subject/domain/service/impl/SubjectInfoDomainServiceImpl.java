@@ -165,7 +165,23 @@ public class SubjectInfoDomainServiceImpl implements SubjectInfoDomainService {
         //设置点赞属性
         bo.setLiked(subjectLikedDomainService.isLiked(subjectInfoBO.getId().toString(), LoginUtil.getUserId()));
         bo.setLikedCount(subjectLikedDomainService.getLikedCount(subjectInfoBO.getId().toString()));
+        // 快速刷题
+        assembleSubjectCursor(subjectInfoBO, bo);
         return bo;
+    }
+    // 设置题目的游标（快速刷题-上一题，下一题）
+    private void assembleSubjectCursor(SubjectInfoBO subjectInfoBO, SubjectInfoBO bo) {
+        Long categoryId = subjectInfoBO.getCategoryId();
+        Long labelId = subjectInfoBO.getLabelId();
+        Long subjectId = subjectInfoBO.getId();
+        if (Objects.isNull(categoryId) || Objects.isNull(labelId)) {
+            return;
+        }
+        // 由于题目id是自增的，故查询id前面或者后面第一个就行了
+        Long nextSubjectId = subjectInfoService.querySubjectIdCursor(subjectId, categoryId, labelId, 1);
+        bo.setNextSubjectId(nextSubjectId);
+        Long lastSubjectId = subjectInfoService.querySubjectIdCursor(subjectId, categoryId, labelId, 0);
+        bo.setLastSubjectId(lastSubjectId);
     }
 
     // 全文检索
