@@ -110,6 +110,12 @@
             <artifactId>practice-api</artifactId>
             <version>1.0-SNAPSHOT</version>
         </dependency>
+        <!-- 引入auth模块，需要查询用户信息 -->
+        <dependency>
+            <groupId>com.feng.auth.api</groupId>
+            <artifactId>auth-api</artifactId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
 
         <!-- 微服务相关 -->
         <dependency>

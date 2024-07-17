@@ -1,10 +1,10 @@
 package com.feng.practice.server.service;
 
+import com.feng.practice.api.common.PageResult;
 import com.feng.practice.api.req.GetPracticeSubjectsReq;
-import com.feng.practice.api.vo.PracticeSetVO;
-import com.feng.practice.api.vo.PracticeSubjectListVO;
-import com.feng.practice.api.vo.PracticeSubjectVO;
-import com.feng.practice.api.vo.SpecialPracticeVO;
+import com.feng.practice.api.req.GetUnCompletePracticeReq;
+import com.feng.practice.api.vo.*;
+import com.feng.practice.server.entity.dto.PracticeSetDTO;
 import com.feng.practice.server.entity.dto.PracticeSubjectDTO;
 
 import java.util.List;
@@ -25,4 +25,15 @@ public interface PracticeSetService {
      * 4.获取套题每个题目的题目详情
      */
     PracticeSubjectVO getPracticeSubject(PracticeSubjectDTO dto);
+
+    /**
+     * 获取模拟套题内容
+     */
+    PageResult<PracticeSetVO> getPreSetContent(PracticeSetDTO dto);
+
+    /**
+     * 获取未完成练习内容
+     */
+    PageResult<UnCompletePracticeSetVO> getUnCompletePractice(GetUnCompletePracticeReq req);
+
 }

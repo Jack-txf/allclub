@@ -1,16 +1,23 @@
 package com.feng.practice.server.service.impl;
 
+import com.alibaba.fastjson.JSON;
+import com.feng.practice.api.common.PageInfo;
+import com.feng.practice.api.common.PageResult;
 import com.feng.practice.api.enums.CompleteStatusEnum;
 import com.feng.practice.api.enums.IsDeletedFlagEnum;
 import com.feng.practice.api.enums.SubjectInfoTypeEnum;
 import com.feng.practice.api.req.GetPracticeSubjectsReq;
+import com.feng.practice.api.req.GetUnCompletePracticeReq;
 import com.feng.practice.api.vo.*;
 import com.feng.practice.server.dao.*;
 import com.feng.practice.server.entity.dto.CategoryDTO;
+import com.feng.practice.server.entity.dto.PracticeSetDTO;
 import com.feng.practice.server.entity.dto.PracticeSubjectDTO;
 import com.feng.practice.server.entity.po.*;
 import com.feng.practice.server.service.PracticeSetService;
+import com.feng.practice.server.util.DateUtils;
 import com.feng.practice.server.util.LoginUtil;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -21,6 +28,7 @@ import java.math.BigDecimal;
 import java.util.*;
 
 @Service("practiceSetService")
+@Slf4j
 public class PracticeSetServiceImpl implements PracticeSetService {
     @Resource
     private SubjectCategoryDao subjectCategoryDao;
@@ -259,10 +267,10 @@ public class PracticeSetServiceImpl implements PracticeSetService {
         vo.setSubjectList(practiceSubjectListVOS);
         PracticeSetPO practiceSetPO = practiceSetDao.selectById(setId);
         vo.setTitle(practiceSetPO.getSetName());
-        if (Objects.isNull(practiceId)) {
+        if (Objects.isNull(practiceId)) { // practiceId为空，说明是第一次进入这次练习，
             Long newPracticeId = insertUnCompletePractice(setId);
             vo.setPracticeId(newPracticeId);
-        } else {
+        } else {// 练习id不为空，说明该次练习已经练习过了（要么完成了，要么没有完成）
             updateUnCompletePractice(practiceId);
             PracticePO practicePO = practiceDao.selectById(practiceId);
             vo.setTimeUse(practicePO.getTimeUse());
@@ -324,4 +332,65 @@ public class PracticeSetServiceImpl implements PracticeSetService {
         return practiceSubjectVO;
     }
     //----------end
+
+    @Override
+    public PageResult<PracticeSetVO> getPreSetContent(PracticeSetDTO dto) {
+        PageResult<PracticeSetVO> pageResult = new PageResult<>();
+        PageInfo pageInfo = dto.getPageInfo();
+        pageResult.setPageNo(pageInfo.getPageNo());
+        pageResult.setPageSize(pageInfo.getPageSize());
+        int start = (pageInfo.getPageNo() - 1) * pageInfo.getPageSize();
+        Integer count = practiceSetDao.getListCount(dto);
+        if (count == 0) {
+            return pageResult;
+        }
+        List<PracticeSetPO> setPOList = practiceSetDao.getSetList(dto, start, dto.getPageInfo().getPageSize());
+        if (log.isInfoEnabled()) {
+            log.info("获取的模拟考卷列表{}", JSON.toJSONString(setPOList));
+        }
+        List<PracticeSetVO> list = new LinkedList<>();
+        setPOList.forEach(e -> {
+            PracticeSetVO vo = new PracticeSetVO();
+            vo.setSetId(e.getId());
+            vo.setSetName(e.getSetName());
+            vo.setSetHeat(e.getSetHeat());
+            vo.setSetDesc(e.getSetDesc());
+            list.add(vo);
+        });
+        pageResult.setRecords(list);
+        pageResult.setTotal(count);
+        return pageResult;
+    }
+
+    @Override
+    public PageResult<UnCompletePracticeSetVO> getUnCompletePractice(GetUnCompletePracticeReq req) {
+        PageResult<UnCompletePracticeSetVO> pageResult = new PageResult<>();
+        PageInfo pageInfo = req.getPageInfo();
+        pageResult.setPageNo(pageInfo.getPageNo());
+        pageResult.setPageSize(pageInfo.getPageSize());
+        int start = (pageInfo.getPageNo() - 1) * pageInfo.getPageSize();
+        String loginId = LoginUtil.getLoginId();
+        Integer count = practiceDao.getUnCompleteCount(loginId);
+        if (count == 0) {
+            return pageResult;
+        }
+        List<PracticePO> poList = practiceDao.getUnCompleteList(loginId, start, req.getPageInfo().getPageSize());
+        if (log.isInfoEnabled()) {
+            log.info("获取未完成的考卷列表{}", JSON.toJSONString(poList));
+        }
+        List<UnCompletePracticeSetVO> list = new LinkedList<>();
+        poList.forEach(e -> {
+            UnCompletePracticeSetVO vo = new UnCompletePracticeSetVO();
+            vo.setSetId(e.getSetId());
+            vo.setPracticeId(e.getId());
+            vo.setPracticeTime(DateUtils.format(e.getSubmitTime(), "yyyy-MM-dd"));
+            PracticeSetPO practiceSetPO = practiceSetDao.selectById(e.getSetId());
+            vo.setTitle(practiceSetPO.getSetName());
+            list.add(vo);
+        });
+        pageResult.setRecords(list);
+        pageResult.setTotal(count);
+        return pageResult;
+    }
+
 }
