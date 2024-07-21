@@ -1,6 +1,6 @@
 package com.feng.circle.server.config.interceptor;
 
-import com.feng.practice.server.config.context.UserContextHolder;
+import com.feng.circle.server.config.context.UserContextHolder;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.lang.Nullable;
 import org.springframework.web.servlet.HandlerInterceptor;
