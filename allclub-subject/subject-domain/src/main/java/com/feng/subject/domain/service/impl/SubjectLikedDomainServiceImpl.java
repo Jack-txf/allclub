@@ -17,6 +17,7 @@ import com.feng.subject.infra.basic.service.SubjectInfoService;
 import com.feng.subject.infra.basic.service.SubjectLikedService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.MapUtils;
+import org.apache.rocketmq.spring.core.RocketMQTemplate;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -44,8 +45,8 @@ public class SubjectLikedDomainServiceImpl implements SubjectLikedDomainService 
     @Resource
     private RedisUtil redisUtil;
 
-    // @Resource
-    // private RocketMQTemplate rocketMQTemplate;
+    @Resource
+    private RocketMQTemplate rocketMQTemplate;
 
     /*点赞关系的key-hash (总key)
         SUBJECT_LIKED_KEY:（总key）
@@ -67,6 +68,7 @@ public class SubjectLikedDomainServiceImpl implements SubjectLikedDomainService 
      */
     private static final String SUBJECT_LIKED_DETAIL_KEY = "subject.liked.detail";
 
+    // 先存入redis，再通过xxljob同步到数据库中(domain层的job中的定时任务)
     @Override
     public void add(SubjectLikedBO subjectLikedBO) {
         Long subjectId = subjectLikedBO.getSubjectId();
@@ -75,11 +77,12 @@ public class SubjectLikedDomainServiceImpl implements SubjectLikedDomainService 
        String hashKey = buildSubjectLikedKey(subjectId.toString(), likeUserId);
        redisUtil.putHash(SUBJECT_LIKED_KEY, hashKey, status); // 存入redis
 
+        // 使用mq来完成异步同步（发送一条消息到消息队列，同步一条点赞信息-----与批量同步的区别-----见第138行代码）
         SubjectLikedMessage subjectLikedMessage = new SubjectLikedMessage();
         subjectLikedMessage.setSubjectId(subjectId);
         subjectLikedMessage.setLikeUserId(likeUserId);
         subjectLikedMessage.setStatus(status);
-        // rocketMQTemplate.convertAndSend("subject-liked", JSON.toJSONString(subjectLikedMessage));
+        rocketMQTemplate.convertAndSend("subject-liked", JSON.toJSONString(subjectLikedMessage));
 
         String detailKey = SUBJECT_LIKED_DETAIL_KEY + "." + subjectId + "." + likeUserId; // 点赞关系：(key)
         String countKey = SUBJECT_LIKED_COUNT_KEY + "." + subjectId; // 该题目被点赞的次数key
@@ -132,6 +135,7 @@ public class SubjectLikedDomainServiceImpl implements SubjectLikedDomainService 
 
     @Override
     public void syncLiked() {
+        // 从redis里面拿一批数据，批量同步
         Map<Object, Object> subjectLikedMap = redisUtil.getHashAndDelete(SUBJECT_LIKED_KEY);
         if (log.isInfoEnabled()) {
             log.info("syncLiked.subjectLikedMap:{}", JSON.toJSONString(subjectLikedMap));
@@ -183,7 +187,7 @@ public class SubjectLikedDomainServiceImpl implements SubjectLikedDomainService 
     public void syncLikedByMsg(SubjectLikedBO subjectLikedBO) {
         List<SubjectLiked> subjectLikedList = new LinkedList<>();
         SubjectLiked subjectLiked = new SubjectLiked();
-        subjectLiked.setSubjectId(Long.valueOf(subjectLikedBO.getSubjectId()));
+        subjectLiked.setSubjectId(subjectLikedBO.getSubjectId());
         subjectLiked.setLikeUserId(subjectLikedBO.getLikeUserId());
         subjectLiked.setStatus(subjectLikedBO.getStatus());
         subjectLiked.setIsDeleted(IsDeletedFlagEnum.UN_DELETED.getCode());

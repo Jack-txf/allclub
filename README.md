@@ -11,3 +11,5 @@ sa-token
 getUserid,username,都是微信用户的openID!!!!!!!!!!!!========================
 
 systemctl list-unit-files 查看服务启动项
+
+**api-server架构：api层放一些实体类，工具类之类的东西，server层具体服务**

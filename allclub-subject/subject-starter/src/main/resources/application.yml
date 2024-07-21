@@ -42,6 +42,10 @@ es:
       nodes: 47.108.252.155:9200 #一个集群可以有多个ip
       username: elastic
       password: TXFtxf1121512752
+rocketmq:
+  name-server: 192.168.32.128:9876 #连接的我的虚拟机里面安装的mq
+  producer:
+    group: test-group
 
 logging:
   config: classpath:log4j2-spring.xml

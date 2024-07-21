@@ -9,6 +9,11 @@
         <version>1.0-SNAPSHOT</version>
     </parent>
 
+    <properties>
+        <maven.compiler.source>8</maven.compiler.source>
+        <maven.compiler.target>8</maven.compiler.target>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    </properties>
     <artifactId>subject-domain</artifactId>
 
     <dependencies>
@@ -48,6 +53,12 @@
             <groupId>org.springframework</groupId>
             <artifactId>spring-context</artifactId>
             <version>5.3.27</version>
+        </dependency>
+        <!-- RocketMq -->
+        <dependency>
+            <groupId>org.apache.rocketmq</groupId>
+            <artifactId>rocketmq-spring-boot-starter</artifactId>
+            <version>2.2.3</version>
         </dependency>
     </dependencies>
 </project>

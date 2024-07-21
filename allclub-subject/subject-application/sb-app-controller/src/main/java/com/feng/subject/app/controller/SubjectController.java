@@ -15,11 +15,13 @@ import com.feng.subject.infra.basic.service.SubjectCategoryService;
 import com.google.common.base.Preconditions;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.rocketmq.spring.core.RocketMQTemplate;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/subject")
@@ -29,6 +31,8 @@ public class SubjectController {
     private SubjectCategoryService subjectCategoryService;
     @Resource
     private SubjectInfoDomainService subjectInfoDomainService;
+    @Resource
+    private RocketMQTemplate rocketMQTemplate;
 
     /*
     添加题目
@@ -150,5 +154,15 @@ public class SubjectController {
             log.error("SubjectCategoryController.getContributeList.error:{}", e.getMessage(), e);
             return Result.fail("获取贡献榜失败");
         }
+    }
+
+    /*
+    测试mq的消息发送
+     */
+    @PostMapping("/pushMessage")
+    public Result<List<SubjectInfoDTO>> pushMessage(@RequestBody Map<String, Object> params) {
+        String id = (String) params.get("id");
+        rocketMQTemplate.convertAndSend("first-topic", "早上好！" + id);
+        return Result.ok();
     }
 }
