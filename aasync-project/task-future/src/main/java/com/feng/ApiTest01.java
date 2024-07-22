@@ -9,10 +9,10 @@ public class ApiTest01 {
         long start = System.currentTimeMillis();
 
         // 主线程跑
-        syncTest();
+        // syncTest();
 
         // 协同跑
-        // asyncTest();
+        asyncTest();
 
         long end = System.currentTimeMillis();
         System.out.println("共耗时：" + ( end - start));
