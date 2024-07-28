@@ -108,6 +108,7 @@ public class ShareCommentReplyServiceImpl extends ServiceImpl<ShareCommentReplyM
         return true;
     }
 
+    // 查看评论列表 （树）
     @Override
     public List<ShareCommentReplyVO> listComment(GetShareCommentReq req) {
         LambdaQueryWrapper<ShareCommentReply> query = Wrappers.<ShareCommentReply>lambdaQuery()
@@ -124,7 +125,7 @@ public class ShareCommentReplyServiceImpl extends ServiceImpl<ShareCommentReplyM
                         ShareCommentReply::getParentId);
         List<ShareCommentReply> list = list(query);
         List<String> userNameList = list.stream().map(ShareCommentReply::getCreatedBy).distinct().collect(Collectors.toList());
-        Map<String, UserInfo> userInfoMap = userRpc.batchGetUserInfo(userNameList);
+        Map<String, UserInfo> userInfoMap = userRpc.batchGetUserInfo(userNameList); // 批量查出来用户！
         UserInfo defaultUser = new UserInfo();
         List<ShareCommentReplyVO> voList = list.stream().map(item -> {
             ShareCommentReplyVO vo = new ShareCommentReplyVO();

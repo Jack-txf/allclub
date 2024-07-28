@@ -38,34 +38,43 @@ public class ShareCircleServiceImpl extends ServiceImpl<ShareCircleMapper, Share
     @Override
     public List<ShareCircleVO> listResult() {
         List<ShareCircleVO> res = CACHE.getIfPresent(1);
-        return Optional.ofNullable(res).orElseGet(() -> {
-            List<ShareCircle> list = super.list(Wrappers.<ShareCircle>lambdaQuery().eq(ShareCircle::getIsDeleted, IsDeletedFlagEnum.UN_DELETED.getCode()));
-            List<ShareCircle> parentList = list.stream().filter(item -> item.getParentId() == -1L).collect(Collectors.toList());
-            Map<Long, List<ShareCircle>> map = list.stream().collect(Collectors.groupingBy(ShareCircle::getParentId));
-            List<ShareCircleVO> collect = parentList.stream().map(item -> {
-                ShareCircleVO vo = new ShareCircleVO();
-                vo.setId(item.getId());
-                vo.setCircleName(item.getCircleName());
-                vo.setIcon(item.getIcon());
-                List<ShareCircle> shareCircles = map.get(item.getId());
-                if (CollectionUtils.isEmpty(shareCircles)) {
-                    vo.setChildren(Collections.emptyList());
-                } else {
-                    List<ShareCircleVO> children = shareCircles.stream().map(cItem -> {
-                        ShareCircleVO cVo = new ShareCircleVO();
-                        cVo.setId(cItem.getId());
-                        cVo.setCircleName(cItem.getCircleName());
-                        cVo.setIcon(cItem.getIcon());
-                        cVo.setChildren(Collections.emptyList());
-                        return cVo;
+        // Optional
+        return Optional.ofNullable(res)
+                .orElseGet(() -> {
+                    List<ShareCircle> list = super.list(Wrappers.<ShareCircle>lambdaQuery()
+                            .eq(ShareCircle::getIsDeleted, IsDeletedFlagEnum.UN_DELETED.getCode())); // 查询所有未删除的圈子
+                    // 得到所有父级
+                    List<ShareCircle> parentList = list.stream().filter(item -> item.getParentId() == -1L).collect(Collectors.toList());
+                    Map<Long, List<ShareCircle>> map = list.stream().collect(Collectors.groupingBy(ShareCircle::getParentId)); // 分组
+                    /* 处理成这样的格式。
+                    [
+                        {"热门圈子": ["Java", "C++"]}, {"前端圈子": ["Vue圈子", "React交流"]}
+                    ]
+                     */
+                    List<ShareCircleVO> collect = parentList.stream().map(item -> {
+                        ShareCircleVO vo = new ShareCircleVO();
+                        vo.setId(item.getId());
+                        vo.setCircleName(item.getCircleName());
+                        vo.setIcon(item.getIcon());
+                        List<ShareCircle> shareCircles = map.get(item.getId());
+                        if (CollectionUtils.isEmpty(shareCircles)) {
+                            vo.setChildren(Collections.emptyList());
+                        } else {
+                            List<ShareCircleVO> children = shareCircles.stream().map(cItem -> {
+                                ShareCircleVO cVo = new ShareCircleVO();
+                                cVo.setId(cItem.getId());
+                                cVo.setCircleName(cItem.getCircleName());
+                                cVo.setIcon(cItem.getIcon());
+                                cVo.setChildren(Collections.emptyList());
+                                return cVo;
+                            }).collect(Collectors.toList());
+                            vo.setChildren(children);
+                        }
+                        return vo;
                     }).collect(Collectors.toList());
-                    vo.setChildren(children);
-                }
-                return vo;
-            }).collect(Collectors.toList());
-            CACHE.put(1, collect);
-            return collect;
-        });
+                    CACHE.put(1, collect);
+                    return collect;
+                });
     }
 
     @Override
@@ -83,7 +92,8 @@ public class ShareCircleServiceImpl extends ServiceImpl<ShareCircleMapper, Share
 
     @Override
     public Boolean updateCircle(UpdateShareCircleReq req) {
-        LambdaUpdateWrapper<ShareCircle> update = Wrappers.<ShareCircle>lambdaUpdate().eq(ShareCircle::getId, req.getId())
+        LambdaUpdateWrapper<ShareCircle> update = Wrappers.<ShareCircle>lambdaUpdate()
+                .eq(ShareCircle::getId, req.getId())
                 .eq(ShareCircle::getIsDeleted, IsDeletedFlagEnum.UN_DELETED.getCode())
                 .set(Objects.nonNull(req.getParentId()), ShareCircle::getParentId, req.getParentId())
                 .set(Objects.nonNull(req.getIcon()), ShareCircle::getIcon, req.getIcon())
@@ -91,16 +101,19 @@ public class ShareCircleServiceImpl extends ServiceImpl<ShareCircleMapper, Share
                 .set(ShareCircle::getUpdateBy, LoginUtil.getLoginId())
                 .set(ShareCircle::getUpdateTime, new Date());
         boolean res = super.update(update);
-        CACHE.invalidateAll();
+        CACHE.invalidateAll();// 清除缓存
         return res;
     }
 
     @Override
     public Boolean removeCircle(RemoveShareCircleReq req) {
-        boolean res = super.update(Wrappers.<ShareCircle>lambdaUpdate().eq(ShareCircle::getId, req.getId())
+        boolean res = super.update(Wrappers.<ShareCircle>lambdaUpdate()
+                .eq(ShareCircle::getId, req.getId())
                 .eq(ShareCircle::getIsDeleted, IsDeletedFlagEnum.UN_DELETED.getCode())
                 .set(ShareCircle::getIsDeleted, IsDeletedFlagEnum.DELETED.getCode()));
-        super.update(Wrappers.<ShareCircle>lambdaUpdate().eq(ShareCircle::getParentId, req.getId())
+        // 这是什么鬼？
+        super.update(Wrappers.<ShareCircle>lambdaUpdate()
+                .eq(ShareCircle::getParentId, req.getId())
                 .eq(ShareCircle::getIsDeleted, IsDeletedFlagEnum.UN_DELETED.getCode())
                 .set(ShareCircle::getIsDeleted, IsDeletedFlagEnum.DELETED.getCode()));
         CACHE.invalidateAll();

@@ -77,10 +77,11 @@ public class ShareMomentServiceImpl extends ServiceImpl<ShareMomentMapper, Share
         Page<ShareMoment> page = new Page<>(pageInfo.getPageNo(), pageInfo.getPageSize());
         Page<ShareMoment> pageRes = super.page(page, query);
         PageResult<ShareMomentVO> result = new PageResult<>();
-        List<ShareMoment> records = pageRes.getRecords();
+        List<ShareMoment> records = pageRes.getRecords(); // 得到该圈子的所有动态
         List<String> userNameList = records.stream().map(ShareMoment::getCreatedBy).distinct().collect(Collectors.toList());
         Map<String, UserInfo> userInfoMap = userRpc.batchGetUserInfo(userNameList);
         UserInfo defaultUser = new UserInfo();
+        // entity对象转为vo对象
         List<ShareMomentVO> list = records.stream().map(item -> {
             ShareMomentVO vo = new ShareMomentVO();
             vo.setId(item.getId());
