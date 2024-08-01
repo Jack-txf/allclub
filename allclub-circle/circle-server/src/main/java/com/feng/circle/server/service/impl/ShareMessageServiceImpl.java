@@ -18,6 +18,7 @@ import com.feng.circle.server.entity.po.ShareMessage;
 import com.feng.circle.server.rpc.UserRpc;
 import com.feng.circle.server.service.ShareMessageService;
 import com.feng.circle.server.util.LoginUtil;
+import com.feng.circle.server.websocket.TxfSocket;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -37,8 +38,8 @@ import java.util.stream.Collectors;
 @Service
 public class ShareMessageServiceImpl extends ServiceImpl<ShareMessageMapper, ShareMessage> implements ShareMessageService {
 
-    // @Resource
-    // private ChickenSocket chickenSocket;
+    @Resource
+    private TxfSocket txfSocket;
     @Resource
     private UserRpc userRpc;
 
@@ -81,7 +82,7 @@ public class ShareMessageServiceImpl extends ServiceImpl<ShareMessageMapper, Sha
         JSONObject message = new JSONObject();
         // 1=评论 2=回复
         message.put("msgType", "COMMENT");
-        message.put("msg", "评论了你的内容，快来看看把");
+        message.put("msg", "有人评论了你的内容，快来看看把");
         message.put("targetId", targetId);
         ShareMessage shareMessage = new ShareMessage();
         shareMessage.setFromId(fromId);
@@ -91,10 +92,12 @@ public class ShareMessageServiceImpl extends ServiceImpl<ShareMessageMapper, Sha
         shareMessage.setCreatedBy(fromId);
         shareMessage.setCreatedTime(new Date());
         shareMessage.setIsDeleted(IsDeletedFlagEnum.UN_DELETED.getCode());
-        // ChickenSocket socket = chickenSocket.getChickenSocket(toId);
-        // if (Objects.nonNull(socket)) {
-        //     chickenSocket.sendMessage(shareMessage.getContent(), socket.getSession());
-        // }
+
+        // websocket实现实时消息通知
+        TxfSocket socket = txfSocket.getTxfSocket(toId);
+        if (Objects.nonNull(socket)) {
+            txfSocket.sendMessage(shareMessage.getContent(), socket.getSession());
+        }
         super.save(shareMessage);
 
     }
@@ -115,10 +118,11 @@ public class ShareMessageServiceImpl extends ServiceImpl<ShareMessageMapper, Sha
         shareMessage.setCreatedBy(fromId);
         shareMessage.setCreatedTime(new Date());
         shareMessage.setIsDeleted(IsDeletedFlagEnum.UN_DELETED.getCode());
-        // ChickenSocket socket = chickenSocket.getChickenSocket(toId);
-        // if (Objects.nonNull(socket)) {
-        //     chickenSocket.sendMessage(shareMessage.getContent(), socket.getSession());
-        // }
+
+        TxfSocket socket = txfSocket.getTxfSocket(toId);
+        if (Objects.nonNull(socket)) {
+            txfSocket.sendMessage(shareMessage.getContent(), socket.getSession());
+        }
         super.save(shareMessage);
 
     }
