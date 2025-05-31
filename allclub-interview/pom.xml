@@ -3,14 +3,15 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
-    <parent>
-        <groupId>com.feng</groupId>
-        <artifactId>aasync-project</artifactId>
-        <version>1.0-SNAPSHOT</version>
-    </parent>
 
-    <groupId>com.feng.async</groupId>
-    <artifactId>future-project01</artifactId>
+    <groupId>com.feng.interview</groupId>
+    <artifactId>allclub-interview</artifactId>
+    <version>1.0-SNAPSHOT</version>
+    <packaging>pom</packaging>
+    <modules>
+        <module>interview-api</module>
+        <module>interview-server</module>
+    </modules>
 
     <properties>
         <maven.compiler.source>8</maven.compiler.source>
@@ -19,11 +20,13 @@
     </properties>
 
     <dependencies>
-        <!-- <dependency> -->
-        <!--     <groupId>org.springframework.boot</groupId> -->
-        <!--     <artifactId>spring-boot-starter-parent</artifactId> -->
-        <!--     <version>2.7.18</version> -->
-        <!-- </dependency> -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-dependencies</artifactId>
+            <version>2.4.2</version>
+            <type>pom</type>
+            <scope>import</scope>
+        </dependency>
     </dependencies>
 
 </project>
