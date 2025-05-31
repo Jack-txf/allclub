@@ -22,19 +22,19 @@ spring:
           predicates:
             - Path=/subject/**
         - id: practice
-          uri: lb://jc-club-practice-dev
+          uri: lb://all-club-practice
           predicates:
             - Path=/practice/**
 #          filters:
 #            - StripPrefix=1
         - id: circle
-          uri: lb://jc-club-circle
+          uri: lb://all-club-circle
           predicates:
             - Path=/circle/**
 #          filters:
 #            - StripPrefix=1
         - id: interview
-          uri: lb://jc-club-interview
+          uri: lb://all-club-interview
           predicates:
             - Path=/interview/**
 #          filters:
