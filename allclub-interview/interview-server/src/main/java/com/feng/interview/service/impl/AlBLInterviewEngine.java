@@ -24,7 +24,7 @@ import java.util.stream.Collectors;
 public class AlBLInterviewEngine implements InterviewEngine {
 
     //换自己的token
-    private static final String apiKey = "sk-44209xxxxx";
+    private static final String apiKey = "";
 
     @Override
     public EngineEnum engineType() {
