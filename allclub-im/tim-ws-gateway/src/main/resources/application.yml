@@ -6,7 +6,7 @@ spring:
     redis:
       host: 127.0.0.1
       port: 6379
-      password: TXFtxf1121512752
+      password: 123456
       database: 5
       lettuce:
         pool:
@@ -28,7 +28,7 @@ dubbo:
     register-mode: instance
     parameters.namespace: 24a45e78-52b8-4ea0-aee5-4ef4f357bc1f
     parameters.username: nacos
-    parameters.password: 1Q2W3E4R
+    parameters.password: 123456
   application:
     qos-enable: false
 

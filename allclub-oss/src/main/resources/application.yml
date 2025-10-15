@@ -2,7 +2,7 @@ server:
   port: 8900
 
 minio:
-  url: http://47.108.81.82:9000
+  url: http://127.0.0.1:9000
   accessKey: minioadmin
   secretKey: minioadmin
 

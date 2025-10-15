@@ -7,7 +7,7 @@ spring:
     username: root
     #数据库密码加密
     password: WqwtJTHxVprKmBkr7MLTtV7r9i9FcVUx7Hs4UhzhAdegjcUkDBN7mD8LXNmDGDXeUNqlVH6YS9eLgS7FUQ2vpQ==
-    url: jdbc:mysql://47.108.81.82:3306/txf_club_db?serverTimezone=Asia/Shanghai&useUnicode=true&characterEncoding=utf8&useSSL=true
+    url: jdbc:mysql://127.0.0.1:3306/txf_club_db?serverTimezone=Asia/Shanghai&useUnicode=true&characterEncoding=utf8&useSSL=true
     type: com.alibaba.druid.pool.DruidDataSource
     druid:
       initial-size: 20
@@ -39,11 +39,11 @@ es:
   cluster:
     esConfigs[0]:
       name: dbcee53dd3da
-      nodes: 47.108.252.155:9200 #一个集群可以有多个ip
+      nodes: 127.0.0.1:9200 #一个集群可以有多个ip
       username: elastic
-      password: TXFtxf1121512752
+      password: 123456
 rocketmq:
-  name-server: 192.168.32.128:9876 #连接的我的虚拟机里面安装的mq
+  name-server: 127.0.0.1:9876 #连接的我的虚拟机里面安装的mq
   producer:
     group: test-group
 

@@ -6,9 +6,9 @@ spring:
   cloud:
     nacos:
       config:
-        server-addr: 47.108.81.82:8848
+        server-addr: 127.0.0.1:8848
         username: nacos
-        password: 1q2w3e4r5t6y7u
+        password: 123456
         group: DEFAULT_GROUP
         # public这个命名空间没有命名空间ID，这个要注释掉，不然会一直循环打印
         #        namespace: public
@@ -16,6 +16,6 @@ spring:
         prefix: ${spring.application.name}
       discovery:
         enabled: true
-        server-addr: 47.108.81.82:8848
+        server-addr: 127.0.0.1:8848
         username: nacos
-        password: 1q2w3e4r5t6y7u
+        password: 123456

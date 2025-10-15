@@ -3,9 +3,9 @@ server:
 spring:
   data:
     redis:
-      host: 124.222.85.75
+      host: 127.0.0.1
       port: 6379
-      password: TXFtxf1121512752
+      password: 123456
       database: 5
       lettuce:
         pool:

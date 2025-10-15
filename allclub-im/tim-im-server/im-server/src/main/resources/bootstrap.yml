@@ -8,7 +8,7 @@ spring:
       config:
         server-addr: 127.0.0.1:8848
         username: nacos
-        password: 1Q2W3E4R
+        password: 123456
         group: DEFAULT_GROUP
         file-extension: yaml
         prefix: ${spring.application.name}
@@ -17,5 +17,5 @@ spring:
         enabled: true
         server-addr: 127.0.0.1:8848
         username: nacos
-        password: 1Q2W3E4R
+        password: 123456
         namespace: 24a45e78-52b8-4ea0-aee5-4ef4f357bc1f
