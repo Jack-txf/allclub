@@ -1,0 +1,13 @@
+server:
+  port: 9999
+spring:
+  cloud:
+    gateway:
+      routes:
+        - id: tim-auth
+          uri: lb://tim-user-auth
+          predicates:
+            - Path=/api/user/**
+          filters:
+            - StripPrefix=1 # 去掉一个前缀 /api/user/login --> /user/login
+

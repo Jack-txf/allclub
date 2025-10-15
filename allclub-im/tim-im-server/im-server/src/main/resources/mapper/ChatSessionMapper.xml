@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.feng.tim.im.mapper.ChatSessionMapper">
+
+    <resultMap type="com.feng.tim.im.api.pojo.ChatSession" id="ChatSessionMap">
+        <result property="chatId" column="chat_id" jdbcType="INTEGER"/>
+        <result property="type" column="type" jdbcType="INTEGER"/>
+        <result property="name" column="name" jdbcType="VARCHAR"/>
+        <result property="avatar" column="avatar" jdbcType="VARCHAR"/>
+        <result property="creatorId" column="creator_id" jdbcType="INTEGER"/>
+        <result property="lastMsgId" column="last_msg_id" jdbcType="INTEGER"/>
+        <result property="lastMsgTime" column="last_msg_time" jdbcType="TIMESTAMP"/>
+        <result property="isDeleted" column="is_deleted" jdbcType="INTEGER"/>
+        <result property="createdAt" column="created_at" jdbcType="TIMESTAMP"/>
+        <result property="updatedAt" column="updated_at" jdbcType="TIMESTAMP"/>
+    </resultMap>
+
+</mapper>
+

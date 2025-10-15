@@ -80,3 +80,13 @@ txf-allclub 是一个综合型俱乐部管理平台，包含用户权限管理�
    cd xxl-job/xxl-job-admin
    mvn spring-boot:run
    ```
+   
+## IM更新
+**需要的中间件**：Redis、Nacos、MySQL8.x、消息队列MQ【RocketMQ】
+### 软件架构
+![](.\zimages\架构1.png)
+
+上图就是该项目的大致架构说明。为什么要这么设计呢？下图给出原因:
+
+![](.\zimages\原因1.png)
+

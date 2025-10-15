@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.feng.tim.im.mapper.FriendRelatedMapper">
+
+    <resultMap type="com.feng.tim.im.api.pojo.FriendRelated" id="FriendRelatedMap">
+        <result property="friendRelatedId" column="friend_related_id" jdbcType="INTEGER"/>
+        <result property="userAid" column="user_aid" jdbcType="INTEGER"/>
+        <result property="userBid" column="user_bid" jdbcType="INTEGER"/>
+        <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+    </resultMap>
+
+</mapper>
+

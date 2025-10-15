@@ -1,0 +1,21 @@
+server:
+  port: 10010
+spring:
+  application:
+    name: im-server-1
+  cloud:
+    nacos:
+      config:
+        server-addr: 127.0.0.1:8848
+        username: nacos
+        password: 1Q2W3E4R
+        group: DEFAULT_GROUP
+        file-extension: yaml
+        prefix: ${spring.application.name}
+        namespace: 24a45e78-52b8-4ea0-aee5-4ef4f357bc1f
+      discovery:
+        enabled: true
+        server-addr: 127.0.0.1:8848
+        username: nacos
+        password: 1Q2W3E4R
+        namespace: 24a45e78-52b8-4ea0-aee5-4ef4f357bc1f

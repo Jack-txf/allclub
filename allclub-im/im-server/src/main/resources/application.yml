@@ -1,7 +1,0 @@
-spring:
-  application:
-    name: club-im
-server:
-  port: 9000
-websocket:
-  port: 19999

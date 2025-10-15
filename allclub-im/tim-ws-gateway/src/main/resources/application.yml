@@ -1,0 +1,41 @@
+# 非web应用配置
+spring:
+  main:
+    web-application-type: none
+  data:
+    redis:
+      host: 127.0.0.1
+      port: 6379
+      password: TXFtxf1121512752
+      database: 5
+      lettuce:
+        pool:
+          max-idle: 8
+          max-active: 8
+          min-idle: 1
+
+jwt:
+  # 密钥 (jjwt 0.13.0要求至少256位，即32字节)
+  secret-key: "ygctxf123456WQERTY1q2w3e4r6y7u8i9o"
+  # 过期时间(毫秒)
+  expiration: 3600000  # 1小时
+  # 刷新令牌过期时间
+  refresh-expiration: 604800000  # 7天
+
+dubbo:
+  registry:
+    address: nacos://127.0.0.1:8848
+    register-mode: instance
+    parameters.namespace: 24a45e78-52b8-4ea0-aee5-4ef4f357bc1f
+    parameters.username: nacos
+    parameters.password: 1Q2W3E4R
+  application:
+    qos-enable: false
+
+ws:
+  gateway:
+    appName: ws-gateway-1
+    port: 10015
+    context: /tim
+    listen-topic: # 网关监听的消息队列topic
+      - im-topic1
