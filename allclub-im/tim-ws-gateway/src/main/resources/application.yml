@@ -13,6 +13,11 @@ spring:
           max-idle: 8
           max-active: 8
           min-idle: 1
+          max-wait: 1000ms
+          # 空闲连接检测（关键！）
+          time-between-eviction-runs: 30s  # 每30秒检测一次空闲连接
+        shutdown-timeout: 100ms
+      timeout: 5s
 
 jwt:
   # 密钥 (jjwt 0.13.0要求至少256位，即32字节)
@@ -36,6 +41,7 @@ ws:
   gateway:
     appName: ws-gateway-1
     port: 10015
+    #    port: 10016
     context: /tim
-    listen-topic: # 网关监听的消息队列topic
-      - im-topic1
+    listen-topic: im-topic1 # 网关监听的消息队列topic 【一个网关只能监听一个topic】
+#    listen-topic: im-topic2

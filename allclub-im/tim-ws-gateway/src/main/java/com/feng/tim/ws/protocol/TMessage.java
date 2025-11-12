@@ -163,8 +163,16 @@ public class TMessage implements Serializable {
         return Objects.hash(msgId, type, chatType, fromUser, toUser, content, extra, timestamp);
     }
 
+    // 错误消息
     public static TMessage error(String msgId, String content) {
         return new TMessage(msgId, MessageType.SYSTEM_ERROR, ChatType.SYSTEM, "system-tim",
                 null, content, null, System.currentTimeMillis());
+    }
+
+    // 心跳消息
+    public static TMessage heartbeat() {
+        String msgId = "heartbeat-" + System.currentTimeMillis();
+        return new TMessage(msgId, MessageType.HEARTBEAT, ChatType.SYSTEM, "system-tim",
+                null, "ping", null, System.currentTimeMillis());
     }
 }

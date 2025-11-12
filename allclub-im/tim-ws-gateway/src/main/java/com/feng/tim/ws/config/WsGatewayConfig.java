@@ -20,5 +20,5 @@ public class WsGatewayConfig {
     private Integer port;
     private String appName;
     private String context;
-    private List<String> listenTopic;
+    private String listenTopic;
 }

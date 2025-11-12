@@ -12,6 +12,11 @@ spring:
           max-idle: 8
           max-active: 8
           min-idle: 1
+          max-wait: 1000ms
+          # 空闲连接检测（关键！）
+          time-between-eviction-runs: 30s  # 每30秒检测一次空闲连接
+        shutdown-timeout: 100ms
+      timeout: 5s
   datasource:
     type: com.alibaba.druid.pool.DruidDataSource
     driver-class-name: com.mysql.cj.jdbc.Driver

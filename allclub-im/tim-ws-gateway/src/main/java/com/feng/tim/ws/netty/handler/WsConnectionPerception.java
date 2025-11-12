@@ -43,12 +43,9 @@ public class WsConnectionPerception extends ChannelInboundHandlerAdapter {
         // 处理空闲事件
         if (evt instanceof IdleStateEvent event) {
             if (event.state() == IdleState.READER_IDLE) {
-                // 读空闲，可能客户端已断开连接
-                log.info("连接超时，关闭连接: {}", ctx.channel().remoteAddress());
-                Channel channel = ctx.channel();
-                connectionManager.remove(connectionManager.getByChannel(channel));
-
-                channel.close();
+                // 读空闲，可能客户端已断开连接, 60s没有收到客户端传来的数据了
+                log.info("60s没有收到客户端传来的数据了: {}", ctx.channel().remoteAddress());
+                connectionManager.sendHeartMsg(ctx.channel()); // 发送给客户端一个心跳包
             }
         }
         if (evt instanceof WebSocketServerProtocolHandler.HandshakeComplete) {

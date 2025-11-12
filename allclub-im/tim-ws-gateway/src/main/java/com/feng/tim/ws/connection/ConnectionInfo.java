@@ -29,6 +29,7 @@ public class ConnectionInfo {
     // ==================== 状态管理（线程安全） ====================
     private final AtomicReference<ConnectionState> state = new AtomicReference<>(ConnectionState.INIT);
     private final AtomicReference<Instant> lastActiveTime = new AtomicReference<>(Instant.now()); // 最后活跃时间
+    private final AtomicInteger retryCount = new AtomicInteger(0);
 
     // ==================== 业务标识（可扩展） ====================
     private final String clientType; // 客户端类型（如APP、WEB、DEVICE）
@@ -72,6 +73,7 @@ public class ConnectionInfo {
     /** 更新最后活跃时间（调用时机：发送/接收消息时） */
     public void updateLastActiveTime() {
         lastActiveTime.set(Instant.now());
+        retryCount.set(0);
     }
 
     // ==================== 统计方法 ====================
@@ -134,6 +136,16 @@ public class ConnectionInfo {
                 "Connection{id=%s, remote=%s, state=%s, user=%s, send=%d, receive=%d}",
                 connectionId, remoteAddress, state.get(), userId, sendMsgCount.get(), receiveMsgCount.get()
         );
+    }
+
+    public void incrementRetryCount() {
+        if (retryCount.incrementAndGet() > 3) {
+            updateState(ConnectionState.CLOSED);
+        }
+    }
+
+    public int getRetryCount() {
+        return retryCount.get();
     }
 
     // ==================== 建造者模式（便于创建对象） ====================

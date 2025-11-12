@@ -77,8 +77,14 @@ public class WsShakeInterceptorHandler extends SimpleChannelInboundHandler<FullH
     private TokenUser tackleToken(String token) {
         if ( token == null ) return null;
         if ( jwtUtils.isTokenValid(token)) {
-            return jwtUtils.getClaimFromToken(token, (c) ->
-                    new TokenUser((String) c.get("uid"), (String) c.get("username")));
+            TokenUser user = null;
+            try {
+                user = jwtUtils.getClaimFromToken(token, (c) ->
+                        new TokenUser((String) c.get("uid"), (String) c.get("username")));
+            } catch (Exception e) {
+                log.error("【ws网关token解析异常】{}", e.getMessage());
+            }
+            return user;
         }
         return null;
     }

@@ -2,6 +2,7 @@ package com.feng.tim.ws.connection;
 
 import com.feng.tim.ws.config.WsGatewayConfig;
 import com.feng.tim.ws.net.NetUtil;
+import com.feng.tim.ws.protocol.TMessage;
 import com.feng.tim.ws.redis.RedisKey;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelId;
@@ -18,9 +19,9 @@ import java.util.concurrent.ConcurrentHashMap;
 @Slf4j
 public class ConnectionManager {
     // 核心存储：connectionId [可以看做uid ] -> Connection
-    private final Map<String, ConnectionInfo> connections = new ConcurrentHashMap<>();
+    private final Map<String, ConnectionInfo> connections = new ConcurrentHashMap<>(128);
     // 索引：channelId -> connectionId（通过Channel快速查找连接）
-    private final Map<ChannelId, String> channelIndex = new ConcurrentHashMap<>();
+    private final Map<ChannelId, String> channelIndex = new ConcurrentHashMap<>(128);
     /*
         connectionId 就可以是 uid了嘛
         基于Redis的ws中心，是一个hash数据结构，表示用户连接的是哪一个ws网关，由于不同结点之间的消息传递是通过RocketMQ的
@@ -43,7 +44,7 @@ public class ConnectionManager {
     // 查看用户在本地，还是其他结点，还是离线
     public String getUserNodeState(String uid) {
         if ( uid == null ) return UserNodeState.Local;
-        if ( connections.get(uid) != null ) return UserNodeState.Unknown;
+        if ( connections.get(uid) != null ) return UserNodeState.Local;
         if ( redisTemplate == null ) {
             log.warn("redisTemplate为空，无法确定！");
             return UserNodeState.Offline;
@@ -161,6 +162,12 @@ public class ConnectionManager {
             channelIndex.remove(channelId);
             // 更新连接状态为已关闭
             connection.updateState(ConnectionState.CLOSED);
+            try {
+                connection.getChannel().close();
+            } catch (Exception e) {
+                log.error("关闭连接异常 {}", e.getMessage());
+            }
+
             // 删除redis
             removeFromRedis(connection);
         }
@@ -180,4 +187,23 @@ public class ConnectionManager {
         return connections.size();
     }
 
+    public void sendHeartMsg(Channel channel) {
+        ConnectionInfo connectionInfo = getByChannel(channel);
+        if ( connectionInfo != null ) {
+            channel.writeAndFlush(TMessage.heartbeat());
+        } else {
+            log.warn("无法找到该连接！{}", channel.id());
+        }
+
+    }
+
+    public void updateActiveTime(Channel channel) {
+        ConnectionInfo connectionInfo = getByChannel(channel);
+        if ( connectionInfo != null ) {
+            connectionInfo.updateLastActiveTime();
+
+        } else {
+            log.warn("无法找到该连接！{}", channel.id());
+        }
+    }
 }

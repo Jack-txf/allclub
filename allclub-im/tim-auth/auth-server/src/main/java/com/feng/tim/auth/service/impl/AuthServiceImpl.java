@@ -59,6 +59,17 @@ public class AuthServiceImpl extends ServiceImpl<UserMapper, User> implements Au
             return R.fail().setData("msg", "账号密码不匹配");
         }
 
+        // 检查是否登录过了
+        try {
+            Boolean b = redisTemplate.hasKey(RedisKey.userTokenKey(user.getUid()));
+            if (Boolean.TRUE.equals(b)) {
+                return R.fail().setData("msg", "用户已登录,不能重新登录");
+            }
+        } catch (Exception e) {
+            log.error("Redis不可用 {}", e.getMessage());
+            return R.fail().setData("msg", "Redis不可用");
+        }
+
         // 生成jwt
         Map<String, Object> claims = new HashMap<>();
         claims.put("uid", String.valueOf(user.getUid()));

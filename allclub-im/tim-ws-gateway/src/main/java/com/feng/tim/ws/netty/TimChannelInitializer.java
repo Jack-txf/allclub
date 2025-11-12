@@ -14,9 +14,12 @@ import io.netty.handler.codec.http.HttpObjectAggregator;
 import io.netty.handler.codec.http.HttpServerCodec;
 import io.netty.handler.codec.http.websocketx.WebSocketServerProtocolHandler;
 import io.netty.handler.codec.http.websocketx.extensions.compression.WebSocketServerCompressionHandler;
+import io.netty.handler.timeout.IdleStateHandler;
 import io.netty.util.concurrent.DefaultEventExecutorGroup;
 import jakarta.annotation.Resource;
 import org.springframework.stereotype.Component;
+
+import java.util.concurrent.TimeUnit;
 
 /**
  * @Description: Channel初始化器
@@ -60,6 +63,11 @@ public class TimChannelInitializer extends ChannelInitializer<NioSocketChannel> 
         // 3.WebSocket协议：握手 + 压缩（先压缩，再握手）
         pipeline.addLast(new WebSocketServerCompressionHandler())  // 添加WebSocket消息压缩处理器 【入站出站】
                 .addLast(new WebSocketServerProtocolHandler(context())); // 添加WebSocket协议处理器 【入站出站】
+        // 【新增】心跳探活（IdleStateHandler + HeartbeatHandler）
+        // IdleStateHandler 参数：(读空闲时间秒, 写空闲时间秒, 读写空闲时间秒)
+        // 60s 内没有收到客户端消息就触发 IdleStateEvent
+        pipeline.addLast(new IdleStateHandler(60, 0, 0, TimeUnit.SECONDS));
+
         // 3.1 连接感知器
         pipeline.addLast(businessEventExecutor, "connection-perception", wsConnectionPerception);
         // 4.消息编解码
