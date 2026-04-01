@@ -1,0 +1,161 @@
+server:
+  port: 8080
+  servlet:
+    context-path: /api
+
+spring:
+  application:
+    name: rag-datasource
+  servlet:
+    multipart:
+      # 单文件最大 200MB
+      max-file-size: 200MB
+      # 单次请求最大 500MB（支持批量上传）
+      max-request-size: 500MB
+
+# =====================================================
+# RAG 数据源接入模块自定义配置
+# =====================================================
+rag:
+  datasource:
+    parser:
+      # 文档解析超时时间（秒）。超时后立即中断，防止恶意文件卡死线程
+      parse-timeout-seconds: 60
+      # 单文件最大允许字节数（200MB = 200 * 1024 * 1024）
+      max-file-size-bytes: 209715200
+      # 是否提取文档元数据（作者、创建时间等）
+      extract-metadata: true
+      # 最大提取文本长度（字符数）。超出则截断，防止超大文档撑爆内存
+      max-content-length: 5000000
+      # OCR 配置（Tika 可调用 Tesseract 对图片/扫描 PDF 做 OCR）
+      ocr:
+        enabled: false
+        # Tesseract 语言包（需要安装 tesseract-ocr）
+        language: chi_sim+eng
+    # 文件类型白名单（MIME type）
+    allowed-mime-types:
+      - application/pdf
+      - application/vnd.openxmlformats-officedocument.wordprocessingml.document   # docx
+      - application/msword                                                          # doc
+      - application/vnd.openxmlformats-officedocument.presentationml.presentation # pptx
+      - application/vnd.ms-powerpoint                                              # ppt
+      - application/vnd.openxmlformats-officedocument.spreadsheetml.sheet         # xlsx
+      - application/vnd.ms-excel                                                   # xls
+      - application/vnd.ms-spreadsheetml # xls
+      - text/csv # csv
+      - text/x-web-markdown   # markdown
+      - text/plain
+      - text/html
+      - text/markdown
+      - application/json
+      - text/xml
+      - application/xml
+# =====================================================
+# RAG 向量数据库模块配置
+# =====================================================
+  vector:
+    # 向量数据库类型: milvus | elasticsearch | pinecone
+    type: milvus
+    milvus:
+      enabled: true
+      # Milvus 服务地址
+      uri: http://172.31.220.24:19530
+      # 认证令牌（如有）
+      token: ${MILVUS_TOKEN:}
+      # 连接超时（毫秒）
+      connect-timeout-ms: 10000
+      # 请求超时（毫秒）
+      request-timeout-ms: 30000
+      # 数据库名称
+      database-name: default
+      # 默认集合配置
+      collection:
+        name: rag_documents
+        dimension: 2560
+        vector-field: vector
+        id-field: doc_id
+        content-field: content
+        metadata-field: metadata
+        shards-num: 1
+        # 索引类型: IVF_FLAT | IVF_SQ8 | IVF_PQ | HNSW | DISKANN | FLAT
+        index-type: HNSW
+        # 度量类型: L2 | IP | COSINE
+        metric-type: COSINE
+  # =====================================================
+  # RAG 分块模块配置
+  # =====================================================
+  chunk:
+    enabled: true
+    # 默认分块策略: fixed_size | paragraph | recursive | semantic | sliding_window
+    default-strategy: sliding_window
+    # 全局默认配置
+    defaults:
+      target-chunk-size: 300
+      min-chunk-size: 100
+      max-chunk-size: 1000
+      overlap-size: 30
+      respect-paragraph-boundaries: true
+      respect-sentence-boundaries: true
+      enable-quality-filter: true
+      min-quality-score: 0.3
+      extract-keywords: false
+    # 按文档类型的差异化配置
+    type-overrides:
+      # Markdown 文件使用递归分块（结构化更好）
+      "text/markdown":
+        strategy: recursive
+        target-chunk-size: 400
+        respect-paragraph-boundaries: true
+      # PDF 使用段落分块
+      "application/pdf":
+        strategy: paragraph
+        target-chunk-size: 600
+        respect-paragraph-boundaries: true
+      # 代码文件使用固定大小分块
+      "application/json":
+        strategy: fixed_size
+        target-chunk-size: 800
+        respect-paragraph-boundaries: false
+      "text/plain":
+        strategy: semantic
+        target-chunk-size: 500
+        extract-keywords: true
+
+# 模型配置
+ai-model:
+  providers:
+    siliconflow:
+      api-key: ${SILICONFLOW-API-KEY}
+      base-url: https://api.siliconflow.cn/v1
+      chat-streaming: true
+      chat-model:
+        - Qwen/Qwen3.5-122B-A10B
+        - Qwen/Qwen3.5-35B-A3B
+      embed-model:
+        - Qwen/Qwen3-Embedding-4B
+        - Qwen/Qwen3-Embedding-8B
+      rerank-model:
+        - Qwen/Qwen3-Reranker-4B
+        - Qwen/Qwen3-Reranker-0.6B
+
+
+
+# Actuator 监控端点
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,prometheus
+  endpoint:
+    health:
+      show-details: always
+  metrics:
+    tags:
+      application: ${spring.application.name}
+
+logging:
+  level:
+    com.feng.rag: DEBUG
+    org.apache.tika: WARN
+    org.apache.pdfbox: WARN
+    org.apache.poi: WARN
