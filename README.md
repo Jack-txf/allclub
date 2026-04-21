@@ -600,8 +600,9 @@ GET /actuator/prometheus  # Prometheus格式指标
 ## 👤 作者信息
 
 - **作者**: txf / Williams_Tian
-- **邮箱**: [your-email@example.com]
+- **邮箱**: [762600503@qq.com]
 - **Gitee**: https://gitee.com/quercus-sp204
+- **微信公众号**：小锋就是我
 
 ---
 
